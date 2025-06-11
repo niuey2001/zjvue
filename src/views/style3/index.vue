@@ -380,11 +380,11 @@ onMounted(async () => {
     </el-card>
   </div>
 </template>
-
-<style scoped>
+ <style scoped>
 .home-container {
-  padding: 0 20px;
+  padding: 10px 120px 100px;
   width: 100%;
+  margin: 0 auto;
   color: #333;
   box-sizing: border-box;
   overflow-x: hidden;
