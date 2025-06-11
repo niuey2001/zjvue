@@ -328,9 +328,9 @@ export default {
     this.Authority = this.$store.state.Authority
 
     // Load saved background color from localStorage if available
-    const savedColor = localStorage.getItem('backgroundColor')||'#2196f3'  ;
+    const savedColor = localStorage.getItem('backgroundColor') || '#2196f3';
     if (savedColor) {
-      this.backgroundColor = savedColor;  
+      this.backgroundColor = savedColor;
     }
 
     var a = []
@@ -753,7 +753,7 @@ export default {
 
 .layout-container-demo .el-main {
   padding: 0;
-  
+
 }
 
 .layout-container-demo .toolbar {
