@@ -1,5 +1,5 @@
 <template>
-  <div class="main-boxdiv">
+  <div class="main-boxdiv" v-loading="loading">
     <div ref="topheii">
       <div class="game_herad_mueu">
         <div class="game-tab-container">
@@ -307,15 +307,13 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 export default {
   props: {
-    home_data: {
-      type: Object
-    },
     UserInfo: {
       type: Object
     },
   },
   data() {
     return {
+      loading: false,
       acq: true,
       Loadingodds: false,
       default_Group: 0,
@@ -326,6 +324,11 @@ export default {
         'PlayType': [1, 3, 4],
         'PlayZt': 0,
         'DefaultGroup': 0
+      },
+      home_data: {
+        'game_index': 0,
+        'GameList': [],
+        'result': ''
       },
       currentTime: 10,
       intervalId: null,
@@ -1871,13 +1874,11 @@ export default {
     }
   },
   created() {
+    this.getlettery()
     // Initialize UserInfo from store if not passed as prop
     if (!this.UserInfo && this.$store && this.$store.state) {
       this.UserInfo = this.$store.state.UserInfo;
     }
-
-    this.GameList = this.home_data.GameList[this.home_data.game_index]
-    this.default_data.LotteryId = this.GameList.lottery_id
     var a = this.$store.state.UserInfo
     this.QuickChooseData = []
     for (let key in a.items) {
@@ -1891,7 +1892,6 @@ export default {
       this.currentTime = this.$store.state.Current
       this.greet(this.currentTime, this.GameList)
     }
-    this.getdata()
 
   },
   setup() {
@@ -2027,6 +2027,49 @@ export default {
     }
   },
   methods: {
+    getlettery() {
+      this.greet(10, this.GameList)
+      this.$request.postData('/home', {}).then(response => {
+        if (response.code == 200) {
+          var lotterydata = response.data.lottery
+          lotterydata.sort((a, b) => a.sort - b.sort)
+          if (this.home_data.GameList.length == lotterydata.length) {
+            for (let key in this.home_data.GameList) {
+              var a = lotterydata.filter(item => item.lottery_id === this.home_data.GameList[key].lottery_id)
+              if (a.length == 1) {
+                for (let key1 in a[0]) {
+                  if (key1 != 'id' && key1 != 'lottery_id' && key1 != 'name' && key1 != 'sort') {
+                    if (this.home_data.GameList[key][key1] != a[0][key1]) {
+                      this.home_data.GameList[key][key1] = a[0][key1]
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            this.home_data.GameList = lotterydata
+          }
+
+          this.GameList = this.home_data.GameList[this.home_data.game_index]
+          this.default_data.LotteryId = this.GameList.lottery_id
+
+          this.$store.commit('setHomeData', this.home_data)
+
+          var lotteryresult = response.data.lotteryresult
+          var r = lotteryresult.filter(item => item.LotteryId === this.home_data.GameList[this.home_data.game_index].lottery_id)
+          if (JSON.stringify(this.home_data.result) != JSON.stringify(r[0])) this.home_data.result = r[0];
+          if (JSON.stringify(this.noticelist) != JSON.stringify(response.data.notice)) {
+            this.noticelist = response.data.notice
+
+          }
+          this.isshowresult = true
+          this.getdata()
+        }
+      }).catch(error => {
+        console.log("error")
+      });
+    },
+
     initializationOdds() {
       this.$request.postData('/kongpan/restore', { 'LotteryId': this.default_data.LotteryId }).then(response => {
         if (response.code == 200) {
@@ -2401,15 +2444,19 @@ export default {
     },
     changeLotteryId(item, index) {
       this.isshowresult = false
-      if (this.$store && this.$store.state) {
-        const homeData = this.$store.state.home_data || {}
-        homeData.game_index = index
-        this.$store.commit('setHomeData', homeData)
+      this.home_data.game_index = index
+      this.$store.commit('setHomeData', this.home_data)
+      if (this.count > 2 && this.count < 10) {
+        this.getlettery()
       }
+    },
+
+    loadingchange() {
+      this.loading = true
       setTimeout(() => {
-        this.isshowresult = true
-      }, 500)
-    }
+        this.loading = false;
+      }, 1000);
+    },
   }
 
 }

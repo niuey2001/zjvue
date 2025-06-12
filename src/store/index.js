@@ -2,6 +2,7 @@ import { createStore } from 'vuex';
 
 export default createStore({
   state: {
+    backgroundColor: '#2196f3',
     value: '',
     token:'',
     url:'',
@@ -193,12 +194,17 @@ export default createStore({
     },
     setOperatePassState (state, payload) {
       state.OperatePassState = payload
+    },
+    setBackgroundColor (state, payload) {
+      state.backgroundColor = payload
     }
+  
   },
   actions: {
     updateValue ({ commit }, payload) {
       commit('setValue', payload)
-    }
+    },
+    
   },
   getters: {
    

@@ -162,7 +162,6 @@
       </div>
     </el-main>
   </el-container>
-  <Footer ref="footerRef" :messages="noticelist" :footerImage="footerImage" />
 
 
 
@@ -259,7 +258,7 @@ export default {
         { 'name': '即时注单', 'action': ['kongpan'], 'data': [{ 'name': '控盘操作', 'sview': 'kongpan' }] },
         // { 'name': '即时注单', 'jszd': ['kongpan'], 'data': [{ 'name': '即时注单', 'sview': 'jszd' }] },
         // { 'name': '即时注单', 'action': ['jszd'], 'data': [{ 'name': '即时注单', 'sview': 'jszd' }] },
-        { 'name': '用户管理', 'action': ['member', 'son', 'bhuser', 'usermanage'], 'data': [{ 'name': '用户管理', 'sview': 'member' }, { 'name': '子账管理', 'sview': 'son' }, { 'name': '补货账号', 'sview': 'bhuser' }] },
+        { 'name': '用户管理', 'action': ['member', 'son', 'bhuser'], 'data': [{ 'name': '用户管理', 'sview': 'member' }, { 'name': '子账管理', 'sview': 'son' }, { 'name': '补货账号', 'sview': 'bhuser' }] },
         { 'name': '报表查询', 'action': ['report'], 'data': [{ 'name': '报表查询', 'sview': 'report' }] },
         // {'name':'开盘设置','action':['lottery'],'data':[{'name':'开盘设置','sview':'lottery'}]},
         { 'name': '内部管理', 'action': ['lottery', 'odds', 'backs', 'autodrops', 'notice'], 'data': [{ 'name': '开盘设置', 'sview': 'lottery' }, { 'name': '赔率设置', 'sview': 'odds' }, { 'name': '退水设置', 'sview': 'backs' }, { 'name': '自动降水', 'sview': 'autodrops' }, { 'name': '通知公告', 'sview': 'notice' }] }
@@ -298,17 +297,24 @@ export default {
     this.UserName = this.$store.state.UserName
     this.UserInfo = this.$store.state.UserInfo
     this.Authority = this.$store.state.Authority
-    this.backgroundColor = this.$store.state.backgroundColor;
+
+    // Load saved background color from localStorage if available
+    const savedColor = localStorage.getItem('backgroundColor') || '#2196f3';
+    if (savedColor) {
+      this.backgroundColor = savedColor;
+    }
+
     var a = []
     for (let key in this.menuData) {
       var s = { 'name': this.menuData[key].name, 'action': [], 'data': [] }
       for (let key1 in this.menuData[key].action) {
+
         if (this.Authority.includes(this.menuData[key].action[key1]) || this.menuData[key].name == '首页') {
           s.action.push(this.menuData[key].action[key1])
+          s.data.push(this.menuData[key].data[key1])
         }
       }
       if (s.action.length > 0) {
-        if (s.name == '用户管理') { s.action.push('usermanage') }
         a.push(s)
       }
     }
@@ -597,13 +603,10 @@ export default {
     changeBackgroundColor(color) {
       this.backgroundColor = color;
       // Store the selected color in localStorage to persist across page refreshes
-      this.$store.commit('setBackgroundColor', color)
+      localStorage.setItem('backgroundColor', color);
     },
   },
   components: {
-    Footer: defineAsyncComponent(() => import('./footer.vue')),
-    usermanage: defineAsyncComponent(() => import('../usermanage/index.vue')),
-    nbgl: defineAsyncComponent(() => import('../nbgl/index.vue')),
     indexpage: defineAsyncComponent(() => import('../index.vue')),
     son: defineAsyncComponent(() => import('../son/index.vue')),
     odds: defineAsyncComponent(() => import('../settings/oddset.vue')),
