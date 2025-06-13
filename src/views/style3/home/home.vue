@@ -180,23 +180,13 @@
     <div class="titlem bodynav">
       安全验证
     </div>
-    <el-form ref="operate" :model="operatePasstxt" label-width="0px" class="custom-form-style" @submit.native.prevent>
-      <table border="1" class="el-form-table">
-        <tr>
-          <td class="el-form-table-label">操作密码</td>
-          <td class="el-form-table-tr">
-            <el-form-item label="">
-              <el-input v-model="operatePasstxt" placeholder="请输入操作密码" style="width: 150px;"></el-input>
-            </el-form-item>
-          </td>
-        </tr>
-        <tr>
-          <td class="el-form-table-label"></td>
-          <td colspan="3" class="el-form-table-footer">
-            <span class="game_box_topbtn" @click="operatePass()">验证操作密码</span>
-          </td>
-        </tr>
-      </table>
+    <el-form ref="operate" :model="operatePasstxt" label-width="100px" class="custom-form-style" @submit.native.prevent>
+      <el-form-item label="操作密码">
+        <el-input v-model="operatePasstxt" placeholder="请输入操作密码" style="width: 150px;"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="operatePass()"> 验证操作密码</el-button>
+      </el-form-item>
     </el-form>
   </el-dialog>
   <el-dialog v-model="gamesort" title="" width="500" style="padding-bottom: 10px !important;">
@@ -262,7 +252,8 @@ export default {
         { 'name': '用户管理', 'action': ['member', 'son', 'bhuser', 'usermanage'], 'data': [{ 'name': '用户管理', 'sview': 'member' }, { 'name': '子账管理', 'sview': 'son' }, { 'name': '补货账号', 'sview': 'bhuser' }] },
         { 'name': '报表查询', 'action': ['report'], 'data': [{ 'name': '报表查询', 'sview': 'report' }] },
         // {'name':'开盘设置','action':['lottery'],'data':[{'name':'开盘设置','sview':'lottery'}]},
-        { 'name': '内部管理', 'action': ['lottery', 'odds', 'backs', 'autodrops', 'notice'], 'data': [{ 'name': '开盘设置', 'sview': 'lottery' }, { 'name': '赔率设置', 'sview': 'odds' }, { 'name': '退水设置', 'sview': 'backs' }, { 'name': '自动降水', 'sview': 'autodrops' }, { 'name': '通知公告', 'sview': 'notice' }] }
+        { 'name': '内部管理', 'action': ['lottery', 'odds', 'backs', 'autodrops'], 'data': [{ 'name': '开盘设置', 'sview': 'lottery' }, { 'name': '赔率设置', 'sview': 'odds' }, { 'name': '退水设置', 'sview': 'backs' }, { 'name': '自动降水', 'sview': 'autodrops' }] }
+        , { 'name': '公告管理', 'action': ['notice'], 'data': [{ 'name': '公告管理', 'sview': 'notice' }] }
       ],
       clientHeight: 0,
       clientHeight1: 0,//监控控盘中表格高度
@@ -309,6 +300,7 @@ export default {
       }
       if (s.action.length > 0) {
         if (s.name == '用户管理') { s.action.push('usermanage') }
+        if (s.name == '内部管理') { s.action.push('nbgl') }
         a.push(s)
       }
     }

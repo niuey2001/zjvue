@@ -59,18 +59,19 @@
     </div>
     <div class="game_herad">
       <div class="game_herad_tab">
-        <div class="game_herad_tab_nav" v-for="(items, index) in Play_Grpup_data"
-          :class="index === default_Group ? 'isActive1' : ''"
-          @click="QuickChooseDatas = [], Play_Group_Check(index, 0, items)">
-          <div class="game_herad_tab_nav_a" :class="animation[index]">
-            <span class="game_herad_tab_nav_title">
-              {{ items.group_name }}
-            </span>
-            <span v-if="index < 3">{{ parseInt(handleTotalLong(items.total_num, 2)) }}</span>
-            <span v-if="index < 3">{{ parseInt(handleTotalLong(items.total_num, 1)) }}</span>
-            <span v-if="index >= 3">{{ parseInt(handleTotalLong(items.total_num, -1)) }}</span>
-          </div>
-        </div>
+        <el-button-group class="button-group-tabs">
+          <el-button :class="{ 'tab-active': index === default_Group }" v-for="(items, index) in Play_Grpup_data"
+            :key="index" @click="QuickChooseDatas = [], Play_Group_Check(index, 0, items)" class="tab-button">
+            {{ items.group_name }}
+            <!-- <template v-if="index < 3">
+              <span>{{ parseInt(handleTotalLong(items.total_num, 2)) }}</span>
+              <span>{{ parseInt(handleTotalLong(items.total_num, 1)) }}</span>
+            </template>
+            <template v-else>
+              <span>{{ parseInt(handleTotalLong(items.total_num, -1)) }}</span>
+            </template> -->
+          </el-button>
+        </el-button-group>
       </div>
     </div>
     <div class="psc_odds_box" v-loading="Loadingodds">
@@ -2562,5 +2563,44 @@ export default {
 
 .ball_green {
   background-color: #33cc33;
+}
+
+.button-group-tabs {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.button-group-tabs .el-button-group {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.tab-button {
+  border-radius: 20px !important;
+  margin: 0 3px !important;
+  padding: 8px 15px !important;
+  background-color: #d7def2;
+  color: #333333 !important;
+  border: none !important;
+  height: 32px !important;
+  line-height: 1 !important;
+  font-size: 13px !important;
+}
+
+.tab-button.tab-active {
+  background-color: #0088ff !important;
+  color: #ffffff !important;
+}
+
+/* 覆盖element-ui默认样式 */
+.el-button-group .el-button {
+  margin-left: 3px !important;
+  margin-right: 3px !important;
+}
+
+.el-button-group .el-button:first-child,
+.el-button-group .el-button:last-child {
+  border-radius: 20px !important;
 }
 </style>
