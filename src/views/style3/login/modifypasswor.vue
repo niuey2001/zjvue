@@ -1,36 +1,40 @@
 <template>
   <div class="full-screen-div1 login">
-            <el-row>
-              <el-col justify="center">
-                <div class="grid-content">
-                  <h1>密码修改</h1>
-                </div>
-              </el-col>
-            </el-row>
-            <el-form ref="modifyForm" :model="modifyForm" :rules="rules" label-position="left" label-width="0px" v-loading="loading">
-    
-              <el-form-item label="" required>
-                <el-input type="text"  :value="UserName" autocomplete="true" prefix-icon="User" disabled></el-input>
-              </el-form-item>
-              <el-form-item label=""  prop="OldPassword">
-                <el-input type="password" v-model="modifyForm.OldPassword" autocomplete="off" prefix-icon="Lock" placeholder="请输入旧密码" show-password></el-input>
-              </el-form-item>
-              <el-form-item label=""  prop="NewPassword">
-                <el-input type="password" v-model="modifyForm.NewPassword" autocomplete="off" prefix-icon="Lock" placeholder="请输入新密码" show-password></el-input>
-              </el-form-item>              
-              <el-form-item label=""  prop="ConfirmPassword">
-                <el-input type="password" v-model="modifyForm.ConfirmPassword" autocomplete="off" prefix-icon="Lock" placeholder="确认新密码" show-password></el-input>
-              </el-form-item>       
-              <el-form-item> 
-                <div class="footerch" style="width: 100%;display:flex;justify-content: space-between;">
-                  <el-button type="primary" @click="submitForm('modifyForm')">确认修改</el-button>
-                  <el-button type="primary" @click="resetForm('modifyForm')">重置</el-button>
-                  <el-button type="primary" @click="returnForm('modifyForm')">取消</el-button>                  
-                </div>
+    <el-row>
+      <el-col justify="center">
+        <div class="grid-content">
+          <h1>密码修改</h1>
+        </div>
+      </el-col>
+    </el-row>
+    <el-form ref="modifyForm" :model="modifyForm" :rules="rules" label-position="left" label-width="0px"
+      v-loading="loading">
 
-              </el-form-item>
-              
-            </el-form>
+      <el-form-item label="" required>
+        <el-input type="text" :value="UserName" autocomplete="true" prefix-icon="User" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="" prop="OldPassword">
+        <el-input type="password" v-model="modifyForm.OldPassword" autocomplete="off" prefix-icon="Lock"
+          placeholder="请输入旧密码" show-password></el-input>
+      </el-form-item>
+      <el-form-item label="" prop="NewPassword">
+        <el-input type="password" v-model="modifyForm.NewPassword" autocomplete="off" prefix-icon="Lock"
+          placeholder="请输入新密码" show-password></el-input>
+      </el-form-item>
+      <el-form-item label="" prop="ConfirmPassword">
+        <el-input type="password" v-model="modifyForm.ConfirmPassword" autocomplete="off" prefix-icon="Lock"
+          placeholder="确认新密码" show-password></el-input>
+      </el-form-item>
+      <el-form-item>
+        <div class="footerch" style="width: 100%;display:flex;justify-content: space-between;">
+          <el-button type="primary" @click="submitForm('modifyForm')">确认修改</el-button>
+          <el-button type="primary" @click="resetForm('modifyForm')">重置</el-button>
+          <el-button type="primary" @click="returnForm('modifyForm')">取消</el-button>
+        </div>
+
+      </el-form-item>
+
+    </el-form>
   </div>
 
 </template>
@@ -40,79 +44,79 @@
 import { useTransitionFallthroughEmits } from 'element-plus';
 
 export default {
-  props: ['token','UserName'],
+  props: ['token', 'UserName'],
   data() {
     return {
-      tabtext:"首次登录",
-      UserName:'',
+      tabtext: "首次登录",
+      UserName: '',
       modifyForm: {
-          OldPassword: '',
-          NewPassword: '',
-          ConfirmPassword: ''
-        },
-        rules: {
-          OldPassword: [
-            { required: true, message: '请输入旧密码', trigger: 'change' },
-            { min: 6, max: 16, message: '旧密码长度在 6 到 16 个字符', trigger: 'change' }
-          ], 
-          NewPassword: [
-            { required: true, message: '请输入新密码', trigger: 'change' },
-            {
-              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$/,
-              message: '6-16个字符，需包含字母和数字',
-              trigger: ['blur', 'change']
-            }
-          ], 
-          ConfirmPassword: [
-            { required: true, message: '确认密码', trigger: 'change' },
-            { min: 6, max: 16, message: '二次输入密码长度在 6 到 16 个字符', trigger: 'change' }
-          ],                                       
-        },
-        loading: false  
+        OldPassword: '',
+        NewPassword: '',
+        ConfirmPassword: ''
+      },
+      rules: {
+        OldPassword: [
+          { required: true, message: '请输入旧密码', trigger: 'change' },
+          { min: 6, max: 16, message: '旧密码长度在 6 到 16 个字符', trigger: 'change' }
+        ],
+        NewPassword: [
+          { required: true, message: '请输入新密码', trigger: 'change' },
+          {
+            pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,16}$/,
+            message: '6-16个字符，需包含字母和数字',
+            trigger: ['blur', 'change']
+          }
+        ],
+        ConfirmPassword: [
+          { required: true, message: '确认密码', trigger: 'change' },
+          { min: 6, max: 16, message: '二次输入密码长度在 6 到 16 个字符', trigger: 'change' }
+        ],
+      },
+      loading: false
     }
   },
-  created(){
-    this.UserName=this.$store.state.UserName
+  created() {
+    this.UserName = this.$store.state.UserName
   },
-  methods:{
+  methods: {
     submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.authentication()
-          } else {
-            return false;
-          }
-        });
-      },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
-      },
-      authentication() {
-        this.loading=true
-        this.$request.postData('/changepassword',this.modifyForm).then(response => {
-          this.loading=false
-          if(response.code==200){
-            this.$message({
-              message: response.msg,
-              type: 'success'
-            });
-            var value = this.$store.state.value
-            var view='welcome'+String(value)
-            this.$emit('switchWindow',view)
-          }else{
-            this.$message.error(response.msg);
-          }          
-        }).catch(error => {
-          this.loading=false
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.authentication()
+        } else {
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    authentication() {
+      this.loading = true
+      this.$request.postData('/changepassword', this.modifyForm).then(response => {
+        this.loading = false
+        if (response.code == 200) {
+          this.$message({
+            message: response.msg,
+            type: 'success'
+          });
+          var value = this.$store.state.value
+          var view = 'welcome' + String(value)
+          this.$emit('switchWindow', view)
+        } else {
           this.$message.error(response.msg);
-        });
-      },
-      returnForm(){
-        var value = this.$store.state.value
-        var view='login'+String(value)        
-        this.$emit('switchWindow',view)
-      }  
-  
+        }
+      }).catch(error => {
+        this.loading = false
+        this.$message.error(response.msg);
+      });
+    },
+    returnForm() {
+      var value = this.$store.state.value
+      var view = 'login' + String(value)
+      this.$emit('switchWindow', view)
+    }
+
   }
 }
 </script>
@@ -121,18 +125,20 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
   background: #1e68a3;
 
 }
+
 .login .el-form {
   width: 300px;
   margin: 10px auto 10px auto;
   padding: 20px;
-  border-radius: 10px;  
+  border-radius: 10px;
   background-color: #0000001a !important;
 }
+
 .login .grid-content {
   margin-top: 10% !important;
   width: 300px;
@@ -140,21 +146,26 @@ export default {
   margin: 0 auto;
   color: white;
 }
+
 .login .el-loading-mask {
   background-color: #0000001a !important;
-  border-radius: 10px; 
+  border-radius: 10px;
 }
-.login .el-form-item__content{
-  justify-content: center !important;  
+
+.login .el-form-item__content {
+  justify-content: center !important;
 }
-.login .el-input__wrapper{
-  padding: 6px 11px !important; 
-} 
-.login .el-input__inner{
-  font-weight: 600 !important; 
-  font-size: 14px !important; 
+
+.login .el-input__wrapper {
+  padding: 6px 11px !important;
 }
-.login .footerch button{
-  width:30%;
- }
+
+.login .el-input__inner {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+}
+
+.login .footerch button {
+  width: 30%;
+}
 </style>

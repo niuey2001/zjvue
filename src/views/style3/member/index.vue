@@ -1,7 +1,6 @@
 <template>
   <div class="main-boxdiv" v-loading="loading">
     <div class="mb-4 mb4_top">
-
       <span>{{ MemberType[componentsPoPdata.nowmember.type] }}:{{ componentsPoPdata.nowmember.account }}</span>
       <el-button-group>
         <el-button type="primary" v-if="componentsPoPdata.nowmember.type < 10"
@@ -27,11 +26,6 @@
           @click="componentsPoPdata.nowdata.type = 4, componentsPoPdata.nowdata.search = '', getdata()">全部会员 {{ total4
           }}</el-button>
       </el-button-group>
-
-
-
-
-
       <span>
         状态
       </span>
@@ -46,7 +40,7 @@
         <input v-model="componentsPoPdata.nowdata.search" style="width: 100px" placeholder="请输入账号" />
       </span>
       <span>
-        <span class="topbtn" @click="getdata()">查询</span>
+        <el-button type="primary" @click="getdata()">查询</el-button>
       </span>
       <span style="margin-left:5px">信用额度:</span>
       <span style="color:red;padding:0px 5px">{{ componentsPoPdata.nowmember.ts }}</span>
@@ -71,25 +65,18 @@
       <div class="titlem bodynav dialog-padding">
         批量操作下级-【{{ tsDownData.account }}】
       </div>
-      <el-form ref="oddsset" :model="tsDownData" label-width="0px" class="custom-form-style">
-        <table border="1" class="el-form-table">
-          <tr>
-            <td class="el-form-table-label">操作类型</td>
-            <td class="el-form-table-tr" style="font-weight:600;">
-              <select v-model="tsDownData.type" style="line-height: 25px;font-weight: 700;">
-                <!-- <option :value="parseInt(1)">批量启用所有下级</option> -->
-                <option :value="parseInt(1)">一键提取所有额度</option>
-                <option :value="parseInt(2)">一键提取所有占成</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td class="el-form-table-label"></td>
-            <td colspan="3" class="el-form-table-footer">
-              <span class="game_box_topbtn" @click="UpBatch()">确认操作</span>
-            </td>
-          </tr>
-        </table>
+      <el-form ref="oddsset" :model="tsDownData" label-width="80px" class="custom-form-style">
+        <el-form-item label="操作类型">
+          <el-select v-model="tsDownData.type" style="font-weight: 700; width: 100%;">
+            <!-- <el-option :value="parseInt(1)" label="批量启用所有下级"></el-option> -->
+            <el-option :value="parseInt(1)" label="一键提取所有额度"></el-option>
+            <el-option :value="parseInt(2)" label="一键提取所有占成"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="UpBatch()">确认操作</el-button>
+        </el-form-item>
       </el-form>
     </el-dialog>
     <el-table border :header-cell-class-name="'trheader'"

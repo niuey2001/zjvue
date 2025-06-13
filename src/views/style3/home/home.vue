@@ -30,14 +30,16 @@
 
           <!-- 用户名和下拉菜单 -->
           <div class="user-dropdown" ref="dropdownRef">
-            <div class="username" @click.stop="toggleUserDropdown">
+            <div class="username" @click.stop="toggleUserDropdown" ref="usernameRef">
               <span>{{ UserName }}</span>
               <i class="dropdown-icon"></i>
             </div>
-            <div class="dropdown-menu" v-show="showUserDropdown">
-              <div class="dropdown-item" @click="changePassword">修改密码</div>
-              <div class="dropdown-item" @click="LoginOut()">退出</div>
-            </div>
+            <teleport to="body" v-if="showUserDropdown">
+              <div class="dropdown-menu" ref="dropdownMenuRef">
+                <div class="dropdown-item" @click="changePassword">修改密码</div>
+                <div class="dropdown-item" @click="LoginOut()">退出</div>
+              </div>
+            </teleport>
           </div>
         </div>
       </div>
@@ -325,10 +327,10 @@ export default {
       this.getmainheight()
 
     })
-    document.addEventListener('click', this.closeDropdownOnClickOutside);
+    document.addEventListener('click', this.closeDropdownOnClickOutside, true);
   },
   beforeUnmount() {
-    document.removeEventListener('click', this.closeDropdownOnClickOutside);
+    document.removeEventListener('click', this.closeDropdownOnClickOutside, true);
   },
   setup() {
     //回车键绑定 
@@ -436,8 +438,23 @@ export default {
       this.clientHeight1 = this.clientHeight - 173
     },
 
-    toggleUserDropdown() {
+    toggleUserDropdown(event) {
+      event.stopPropagation()
       this.showUserDropdown = !this.showUserDropdown
+
+      // If showing dropdown, position it correctly
+      if (this.showUserDropdown) {
+        this.$nextTick(() => {
+          const dropdownMenu = this.$refs.dropdownMenuRef
+          const username = this.$refs.usernameRef
+          if (dropdownMenu && username) {
+            const rect = username.getBoundingClientRect()
+            dropdownMenu.style.top = `${rect.bottom}px`
+            dropdownMenu.style.left = `${rect.right - dropdownMenu.offsetWidth}px`
+            dropdownMenu.style.position = 'fixed'
+          }
+        })
+      }
     },
 
     // 打开站内消息
@@ -581,7 +598,11 @@ export default {
     },
     closeDropdownOnClickOutside(event) {
       if (this.showUserDropdown) {
-        if (!this.$refs.dropdownRef || !this.$refs.dropdownRef.contains(event.target)) {
+        // Check if click is outside both the dropdown trigger and the dropdown menu
+        const isClickInsideDropdownTrigger = this.$refs.usernameRef && this.$refs.usernameRef.contains(event.target);
+        const isClickInsideDropdownMenu = this.$refs.dropdownMenuRef && this.$refs.dropdownMenuRef.contains(event.target);
+
+        if (!isClickInsideDropdownTrigger && !isClickInsideDropdownMenu) {
           this.showUserDropdown = false;
         }
       }
@@ -929,6 +950,7 @@ export default {
 /* 用户下拉菜单样式 */
 .user-dropdown {
   position: relative;
+  display: inline-block;
 }
 
 .username {
@@ -956,15 +978,17 @@ export default {
 }
 
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
   width: 120px;
   background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   margin-top: 0;
-  z-index: 1000;
+  z-index: 9999;
   border: 1px solid #ddd;
+  overflow: visible;
+  border-radius: 4px;
+  transform: translateZ(0);
+  padding: 5px 0;
 }
 
 .dropdown-item {

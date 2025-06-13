@@ -1,13 +1,11 @@
 <template>
   <el-container class="layout-container-demo" style="height:100%;overflow:hidden;display:flex;flex-direction:column;"
     v-loading="loading" element-loading-background="#f6f6f654">
-    <el-header>
-      <nav class="banner-tabs">
-        <div v-for="item in menuData" :key="item.name" class="tab-item" :class="{ active: item.sview == currentView }">
-          <span @click="switchWindow(item.sview)">{{ item.name }}</span>
-        </div>
-      </nav>
-    </el-header>
+    <nav class="banner-tabs">
+      <div v-for="item in menuData" :key="item.name" class="tab-item" :class="{ active: item.sview == currentView }">
+        <span @click="switchWindow(item.sview)">{{ item.name }}</span>
+      </div>
+    </nav>
     <el-main style="overflow:hidden;flex:1;">
       <div class="main-boxbody" :style="{ 'height': clientHeight + 'px' }">
         <component :style="{ 'height': clientHeight + 'px' }" :clientHeight1="clientHeight1"
@@ -24,6 +22,12 @@ import { defineAsyncComponent } from 'vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 
 export default {
+  props: {
+    home_data: {
+      type: Object,
+      required: true
+    }
+  },
   data() {
     return {
       Authority: "",
@@ -58,12 +62,7 @@ export default {
       alerton: false,
     }
   },
-  computed: {
-    backgroundColorhalf() {
-      return this.backgroundColor + '80';
-    },
 
-  },
   created() {
     this.currentView = 'member'
     this.UserName = this.$store.state.UserName
@@ -81,21 +80,11 @@ export default {
     }
 
     this.menuData = a
-    document.title = this.UserName + '-' + this.MemberType[this.UserInfo.type] + '-' + this.UserInfo.title
-    this.getlettery()
     this.getmainheight()
 
   },
   mounted() {
-    //window.addEventListener("resize", this.bodyScale, false);
-    // const windowInnerHeight = window.innerHeight 
-    // const maintopDiv1 = this.$refs.topheii
-    // const aaaaa=this.getBoxHeight(maintopDiv1)
-    // const bbbbb=this.getBoxPadding(maintopDiv1)
-    // const topheight=aaaaa+bbbbb
-    // this.nowheight=topheight
-    // this.nowheight=this.nowheight/windowInnerHeight
-    // this.nowheight1=(1-this.nowheight)*100-2    
+
     this.getmainheight()
     window.addEventListener('resize', () => {
       this.getmainheight()
@@ -166,26 +155,7 @@ export default {
       },
       deep: false
     },
-    count: {
-      handler(newVal, oldVal) {
-        if (newVal == 0) {
-          if (!this.showerro) {
-            this.shoeerromsg = ''
-            this.getlettery()
-          }
 
-        }
-      },
-      deep: true
-    },
-    '$store.state.OperatePassState': {
-      handler(newVal, oldVal) {
-        if (newVal == true) {
-          this.operatePassBox = true
-        }
-      },
-      deep: true
-    },
     '$store.state.backgroundColor': {
       handler(newVal, oldVal) {
         this.backgroundColor = newVal
@@ -296,63 +266,15 @@ export default {
         return
       }
     },
-    getlettery() {
-      this.greet(10)
-      this.$request.postData('/home', {}).then(response => {
-        if (response.code == 200) {
-          var lotterydata = response.data.lottery
-          lotterydata.sort((a, b) => a.sort - b.sort)
-          if (this.home_data.GameList.length == lotterydata.length) {
-            for (let key in this.home_data.GameList) {
-              var a = lotterydata.filter(item => item.lottery_id === this.home_data.GameList[key].lottery_id)
-              if (a.length == 1) {
-                for (let key1 in a[0]) {
-                  if (key1 != 'id' && key1 != 'lottery_id' && key1 != 'name' && key1 != 'sort') {
-                    if (this.home_data.GameList[key][key1] != a[0][key1]) {
-                      this.home_data.GameList[key][key1] = a[0][key1]
-                    }
-                  }
-                }
-              }
-            }
-          } else {
-            this.home_data.GameList = lotterydata
-          }
 
-          this.$store.commit('setHomeData', this.home_data)
-
-          var lotteryresult = response.data.lotteryresult
-          var r = lotteryresult.filter(item => item.LotteryId === this.home_data.GameList[this.home_data.game_index].lottery_id)
-          if (JSON.stringify(this.home_data.result) != JSON.stringify(r[0])) this.home_data.result = r[0];
-          if (JSON.stringify(this.noticelist) != JSON.stringify(response.data.notice)) {
-            this.noticelist = response.data.notice
-
-          }
-          this.isshowresult = true
-        }
-      }).catch(error => {
-        console.log("error")
-      });
-    },
     loadingchange() {
       this.loading = true
       setTimeout(() => {
         this.loading = false;
       }, 1000);
     },
-    changeLotteryId(item, index) {
-      this.isshowresult = false
-      this.loadingchange()
-      this.home_data.game_index = index
-      this.$store.commit('setHomeData', this.home_data)
-      this.componentKey++
-      if (this.count > 2 && this.count < 10) {
-        this.getlettery()
-      }
-    },
-    LoginOut() {
-      window.location.reload()
-    },
+
+
     closeDropdownOnClickOutside(event) {
       if (this.showUserDropdown) {
         if (!this.$refs.dropdownRef || !this.$refs.dropdownRef.contains(event.target)) {
@@ -495,32 +417,6 @@ export default {
 
 }
 
-.layout-container-demo .toolbar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  right: 20px;
-}
-
-.toolbar {
-  width: 120px;
-  align-items: start !important;
-}
-
-.notice-container {
-  overflow: hidden;
-  white-space: nowrap;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 30px;
-  line-height: 30px;
-  border-top: 1px solid #c9c9c9;
-  background: #f3f3f3;
-  font-weight: 600;
-  z-index: 999;
-}
 
 .notice-wrapper {
   display: inline-block;
@@ -541,55 +437,6 @@ export default {
   }
 }
 
-.notice-content {
-  display: inline-block;
-  padding-left: 10px;
-  color: #000;
-}
-
-.notice-content:hover {
-  color: #FFC107;
-}
-
-.banner-container {
-  width: 100%;
-  font-family: "Microsoft YaHei", Arial, sans-serif;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.banner-top {
-  height: 40px;
-  background-color: v-bind(backgroundColor);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  color: white;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-}
-
-.logo-text {
-  font-size: 18px;
-  font-weight: bold;
-  margin-left: 8px;
-  letter-spacing: 1px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-}
-
-.divider {
-  margin: 0 8px;
-  color: white;
-}
 
 .color-blocks {
   display: flex;
