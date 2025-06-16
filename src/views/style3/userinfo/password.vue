@@ -24,40 +24,11 @@
       <el-form-item>
         <el-button type="primary" @click="submitForm('modifyForm')">确认修改</el-button>
         <el-button @click="resetForm('modifyForm')">重置</el-button>
+        <el-button   @click="returnForm('modifyForm')">取消</el-button>
+
       </el-form-item>
     </el-form>
   </div>
-  <!-- <div class="full-screen-div1">
-            <el-row>
-              <el-col justify="center">
-                <div class="grid-content">
-                  <h1>密码修改</h1>
-                </div>
-              </el-col>
-            </el-row>
-            <el-form ref="modifyForm" :model="modifyForm" :rules="rules" label-position="left" label-width="0px" v-loading="loading">
-    
-              <el-form-item label="" required>
-                <el-input type="text"  :value="UserName" autocomplete="true" prefix-icon="User" disabled></el-input>
-              </el-form-item>
-              <el-form-item label=""  prop="OldPassword">
-                <el-input type="password" v-model="modifyForm.OldPassword" autocomplete="off" prefix-icon="Lock" placeholder="请输入旧密码" show-password></el-input>
-              </el-form-item>
-              <el-form-item label=""  prop="NewPassword">
-                <el-input type="password" v-model="modifyForm.NewPassword" autocomplete="off" prefix-icon="Lock" placeholder="请输入新密码" show-password></el-input>
-              </el-form-item>              
-              <el-form-item label=""  prop="ConfirmPassword">
-                <el-input type="password" v-model="modifyForm.ConfirmPassword" autocomplete="off" prefix-icon="Lock" placeholder="确认新密码" show-password></el-input>
-              </el-form-item>       
-              <el-form-item> 
-                <el-button type="primary" @click="submitForm('modifyForm')">确认修改</el-button>
-                <el-button @click="resetForm('modifyForm')">重置</el-button>
-                <el-button @click="returnForm('modifyForm')">取消</el-button>
-              </el-form-item>
-              
-            </el-form>
-  </div> -->
-
 </template>
 
 

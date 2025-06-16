@@ -162,7 +162,7 @@ const handleLogin = async () => {
           message: '登录成功，请先修改登录密码',
           type: 'success'
         });
-        goindex('modifypassword')
+        goindex('modifypasswor')
       } else {
         alerton.value = true
         ElMessage({
