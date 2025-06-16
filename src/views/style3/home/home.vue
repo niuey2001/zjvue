@@ -247,7 +247,7 @@ export default {
       },
       menuData: [
         { 'name': '首页', 'action': ['indexpage'], 'data': [{ 'name': '首页', 'sview': 'indexpage' }] },
-        // { 'name': '即时注单', 'action': ['jiankong'], 'data': [{ 'name': '即时注单', 'sview': 'jiankong' }] },
+        { 'name': '彩盘监控', 'action': ['jiankong'], 'data': [{ 'name': '即时注单', 'sview': 'jiankong' }] },
         { 'name': '即时注单', 'action': ['kongpan'], 'data': [{ 'name': '控盘操作', 'sview': 'kongpan' }] },
         // { 'name': '即时注单', 'jszd': ['kongpan'], 'data': [{ 'name': '即时注单', 'sview': 'jszd' }] },
         // { 'name': '即时注单', 'action': ['jszd'], 'data': [{ 'name': '即时注单', 'sview': 'jszd' }] },

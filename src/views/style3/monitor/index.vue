@@ -1,6 +1,37 @@
 <template>
   <el-watermark :content="fontvalue" :font="font">
     <div class="main-boxdiv" v-loading="Loadingodds">
+      <div ref="topheii">
+        <div class="game_herad_mueu">
+          <div class="game-tab-container">
+            <div class="game-tab" v-for="(items, index) in home_data.GameList.slice(0, 6)" :key="items.lottery_id"
+              :class="{ 'active': index === home_data.game_index }" @click="changeLotteryId(items, index)">
+              <div class="tab-content">
+                <div class="tab-name">{{ items.name }}</div>
+                <div class="tab-count">0</div>
+              </div>
+            </div>
+
+            <div class="game-tab more-games" v-if="home_data.GameList.length >= 6">
+              <el-dropdown>
+                <div class="tab-content">
+                  <div class="tab-name">更多游戏</div>
+                  <div class="tab-count">0</div>
+                </div>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="(items, index) in home_data.GameList" v-if="index >= 6"
+                      :key="items.lottery_id" @click="changeLotteryId(items, index)">
+                      {{ items.name }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+          </div>
+
+        </div>
+      </div>
       <div class="mb-4 total_nav_span">
         <span>总收：<span>{{ acq ?
           parseFloat(All_total.Zcje.toFixed(2)) : parseFloat(All_total.BetMoney.toFixed(2)) }}</span></span>
@@ -29,7 +60,8 @@
       </div>
       <div class="mb-4">
         <span v-for="item in gettotal_num()"><span class="total_name">{{ item.name }}</span>:<span
-            class="total_nav_span">{{ parseFloat((acq ? item.Zcje : item.BetMoney).toFixed(2)) }}</span>/<span
+            class="total_nav_span">{{
+              parseFloat((acq ? item.Zcje : item.BetMoney).toFixed(2)) }}</span>/<span
             :class="[acq ? item.Zcty < 0 ? 'Rate' : '' : item.Ty < 0 ? 'Rate' : '']" class="total_nav_span">{{
               parseFloat((acq ?
                 item.Zcty : item.Ty).toFixed(2)) }}</span>/<span
@@ -376,7 +408,7 @@
             </el-table-column>
           </el-table>
           <div class="el-form-table-footer" style="text-align: center;">
-            <span class="game_box_topbtn" @click="OpenBhSubmit()">提交补货</span>
+            <el-button type="primary" @click="OpenBhSubmit()">提交补货</el-button>
           </div>
         </div>
       </el-dialog>
@@ -1584,6 +1616,7 @@ export default {
           'opendata': [62, 63, 64, 65, 66, 67, 68, 69, 70, 71]
         }
       ],
+
       GetOrderListPost: ''
     }
   },
@@ -1591,7 +1624,6 @@ export default {
     this.GameList = this.home_data.GameList[this.home_data.game_index]
     this.default_data.LotteryId = this.GameList.lottery_id
 
-    var a = this.$store.state.UserInfo
     this.fontvalue = this.$store.state.UserName
     if (this.$store.state.Current > 10) {
       this.currentTime = this.$store.state.Current
@@ -1736,6 +1768,57 @@ export default {
     }
   },
   methods: {
+    getlettery() {
+      this.greet(10, this.GameList)
+      this.$request.postData('/home', {}).then(response => {
+        if (response.code == 200) {
+          var lotterydata = response.data.lottery
+          lotterydata.sort((a, b) => a.sort - b.sort)
+          if (this.home_data.GameList.length == lotterydata.length) {
+            for (let key in this.home_data.GameList) {
+              var a = lotterydata.filter(item => item.lottery_id === this.home_data.GameList[key].lottery_id)
+              if (a.length == 1) {
+                for (let key1 in a[0]) {
+                  if (key1 != 'id' && key1 != 'lottery_id' && key1 != 'name' && key1 != 'sort') {
+                    if (this.home_data.GameList[key][key1] != a[0][key1]) {
+                      this.home_data.GameList[key][key1] = a[0][key1]
+                    }
+                  }
+                }
+              }
+            }
+          } else {
+            this.home_data.GameList = lotterydata
+          }
+
+          this.GameList = this.home_data.GameList[this.home_data.game_index]
+          this.default_data.LotteryId = this.GameList.lottery_id
+
+          this.$store.commit('setHomeData', this.home_data)
+
+          var lotteryresult = response.data.lotteryresult
+          var r = lotteryresult.filter(item => item.LotteryId === this.home_data.GameList[this.home_data.game_index].lottery_id)
+          if (JSON.stringify(this.home_data.result) != JSON.stringify(r[0])) this.home_data.result = r[0];
+          if (JSON.stringify(this.noticelist) != JSON.stringify(response.data.notice)) {
+            this.noticelist = response.data.notice
+
+          }
+          this.isshowresult = true
+          this.getdata()
+        }
+      }).catch(error => {
+        console.log("error")
+      });
+    },
+
+    changeLotteryId(item, index) {
+      this.isshowresult = false
+      this.home_data.game_index = index
+      this.$store.commit('setHomeData', this.home_data)
+      if (this.count > 2 && this.count < 10) {
+        this.getlettery()
+      }
+    },
     cellClassName({ row, column, rowIndex, columnIndex }) {
       if (columnIndex == 0 && this.Play_Grpup_data[this.default_Group].alignModel == 2) {
         return 'monitor_alignModel2'
@@ -1789,6 +1872,7 @@ export default {
       }
       this.greet(this.currentTime, this.GameList)
       this.default_data.DefaultGroup = parseInt(this.default_Group)
+      console.log(this.default_data)
       this.$request.postData('/jiankong/find', this.default_data).then(response => {
         this.Loadingodds = false
         if (response.code == 200) {
@@ -1824,7 +1908,6 @@ export default {
             }
           }
 
-
         } else {
           this.IsPost = false
           this.$message.error(response.msg);
@@ -1844,7 +1927,1130 @@ export default {
       if (this.default_data.PlayZt > 0 || this.Play_Grpup_data[this.default_Group].alignModel == 4) { a.push(b) } else { a = b }
       return a
     },
+    resetPlay_Grpup_data() {
+      this.Play_Grpup_data = [
+        {
+          'group_name': '总项',
+          'total_num': [{
+            'PlayType': [1, 2],
+            'name': '特码',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '总项',
+            'data': [1, 2]
+          }],
+          'alignModel': 1,
+          'tableNum': [
+            { 'name': '总项', 'playtype': [1, 2], 'tableDta': [] }
+          ],
+          'PlayZt': 0,
+          'opendata': [1, 2]
+        },
+        {
+          'group_name': '特码',
+          'total_num': [{
+            'PlayType': [1, 2],
+            'name': '特码',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [3],
+            'name': '两面',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [4],
+            'name': '波色',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '特码',
+            'data': [1, 2, 3, 4]
+          }],
+          'alignModel': 1,
+          'tableNum': [
+            { 'name': '特码', 'playtype': [1, 2, 3, 4], 'tableDta': [] }
+          ],
+          'PlayZt': 0,
+          'opendata': [1, 2, 3, 4]
+        },
+        {
+          'group_name': '正码',
+          'total_num': [{
+            'PlayType': [5, 6],
+            'name': '正码',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [7],
+            'name': '两面',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '正码',
+            'data': [5, 6, 7]
+          }],
+          'alignModel': 1,
+          'tableNum': [
+            { 'name': '特码', 'playtype': [5, 6, 7], 'tableDta': [] }
+          ],
+          'PlayZt': 0,
+          'opendata': [5, 6, 7]
+        },
+        {
+          'group_name': '正码特',
+          'total_num': [{
+            'PlayType': [8, 9],
+            'name': '正1',
+            'PlayZt': 1,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [10],
+            'name': '正1两面',
+            'PlayZt': 1,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [11],
+            'name': '正1波色',
+            'PlayZt': 1,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [8, 9],
+            'name': '正2',
+            'PlayZt': 2,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [10],
+            'name': '正2两面',
+            'PlayZt': 2,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [11],
+            'name': '正2波色',
+            'PlayZt': 2,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [8, 9],
+            'name': '正3',
+            'PlayZt': 3,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [10],
+            'name': '正3两面',
+            'PlayZt': 3,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [11],
+            'name': '正3波色',
+            'PlayZt': 3,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [8, 9],
+            'name': '正4',
+            'PlayZt': 4,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [10],
+            'name': '正4两面',
+            'PlayZt': 4,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [11],
+            'name': '正4波色',
+            'PlayZt': 4,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [8, 9],
+            'name': '正5',
+            'PlayZt': 5,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [10],
+            'name': '正5两面',
+            'PlayZt': 5,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [11],
+            'name': '正5波色',
+            'PlayZt': 5,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [8, 9],
+            'name': '正6',
+            'PlayZt': 6,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [10],
+            'name': '正6两面',
+            'PlayZt': 6,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [11],
+            'name': '正6波色',
+            'PlayZt': 6,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '正码特',
+            'data': [8, 9, 10, 11]
+          }],
+          'alignModel': 1,
+          'tableNum': [
+            { 'name': '正1', 'playtype': [8, 9, 10, 11], 'tableDta': [] },
+            { 'name': '正2', 'playtype': [8, 9, 10, 11], 'tableDta': [] },
+            { 'name': '正3', 'playtype': [8, 9, 10, 11], 'tableDta': [] },
+            { 'name': '正4', 'playtype': [8, 9, 10, 11], 'tableDta': [] },
+            { 'name': '正5', 'playtype': [8, 9, 10, 11], 'tableDta': [] },
+            { 'name': '正6', 'playtype': [8, 9, 10, 11], 'tableDta': [] },
+          ],
+          'PlayZt': 6,
+          'opendata': [8, 9, 10, 11]
+        },
+        {
+          'group_name': '特码项',
+          'total_num': [{
+            'PlayType': [12],
+            'name': '特肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [13],
+            'name': '半特',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [14],
+            'name': '特头数',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [15],
+            'name': '特尾数',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [16, 17, 18, 19],
+            'name': '半波',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [20, 21, 22],
+            'name': '半半波',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [23],
+            'name': '五行',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '特码项',
+            'data': [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+          }],
+          'alignModel': 2,
+          'tableNum': [
+            { 'name': '特肖', 'playtype': [12], 'tableDta': [] },
+            { 'name': '半特', 'playtype': [13], 'tableDta': [] },
+            { 'name': '特头数', 'playtype': [14], 'tableDta': [] },
+            { 'name': '特尾数', 'playtype': [15], 'tableDta': [] },
+            { 'name': '半波', 'playtype': [16, 17, 18, 19], 'tableDta': [] },
+            { 'name': '半半波', 'playtype': [20, 21, 22], 'tableDta': [] },
+            { 'name': '五行', 'playtype': [23], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+        },
+        {
+          'group_name': '生肖项',
+          'total_num': [{
+            'PlayType': [24],
+            'name': '一肖中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [25],
+            'name': '一肖不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [27, 28, 29, 30, 31, 32, 33, 34],
+            'name': '生肖量',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '生肖项',
+            'data': [24, 25, 27, 28, 29, 30, 31, 32, 33, 34]
+          }],
+          'alignModel': 2,
+          'tableNum': [
+            { 'name': '一肖中', 'playtype': [24], 'tableDta': [] },
+            { 'name': '一肖不中', 'playtype': [25], 'tableDta': [] },
+            { 'name': '生肖量', 'playtype': [27, 28, 29, 30, 31, 32, 33, 34], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [24, 25, 27, 28, 29, 30, 31, 32, 33, 34]
+        },
+        {
+          'group_name': '尾数项',
+          'total_num': [{
+            'PlayType': [35],
+            'name': '尾数中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [36],
+            'name': '尾数不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [37, 38, 39, 40, 41, 42, 43, 44],
+            'name': '尾数量',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '尾数项',
+            'data': [35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
+          }],
+          'alignModel': 2,
+          'tableNum': [
+            { 'name': '尾数中', 'playtype': [35], 'tableDta': [] },
+            { 'name': '尾数不中', 'playtype': [36], 'tableDta': [] },
+            { 'name': '尾数量', 'playtype': [37, 38, 39, 40, 41, 42, 43, 44], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
+        },
+        {
+          'group_name': '连码',
+          'total_num': [{
+            'PlayType': [59],
+            'name': '二全中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [60],
+            'name': '二中特',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [61],
+            'name': '特串',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [57],
+            'name': '三全中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [58],
+            'name': '三中二',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [56],
+            'name': '四中四',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '二全中',
+            'data': [59]
+          }, {
+            'name': '二中特',
+            'data': [60],
+            'secondrate': true
+          }, {
+            'name': '特串',
+            'data': [61]
+          }, {
+            'name': '三全中',
+            'data': [57]
+          }, {
+            'name': '三中二',
+            'data': [58],
+            'secondrate': true
+          }, {
+            'name': '四中四',
+            'data': [56]
+          }],
+          'alignModel': 3,
+          'tableNum': [
+            { 'name': '二全中', 'playtype': [59], 'tableDta': [] },
+            { 'name': '二中特', 'playtype': [60], 'tableDta': [] },
+            { 'name': '特串', 'playtype': [61], 'tableDta': [] },
+            { 'name': '三全中', 'playtype': [57], 'tableDta': [] },
+            { 'name': '三中二', 'playtype': [58], 'tableDta': [] },
+            { 'name': '四中四', 'playtype': [56], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [56, 57, 58, 59, 60, 61]
+        },
+        {
+          'group_name': '生肖连',
+          'total_num': [{
+            'PlayType': [72],
+            'name': '二肖中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [73],
+            'name': '二肖不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [74],
+            'name': '三肖中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [75],
+            'name': '三肖不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [76],
+            'name': '四肖中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [77],
+            'name': '四肖不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [78],
+            'name': '五肖中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [79],
+            'name': '五肖不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [
+            { 'name': '二肖中', 'data': [72] },
+            { 'name': '二肖不中', 'data': [73] },
+            { 'name': '三肖中', 'data': [74] },
+            { 'name': '三肖不中', 'data': [75] },
+            { 'name': '四肖中', 'data': [76] },
+            { 'name': '四肖不中', 'data': [77] },
+            { 'name': '五肖中', 'data': [78] },
+            { 'name': '五肖不中', 'data': [79] }
+          ],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '二肖中', 'playtype': [72], 'tableDta': [] },
+            { 'name': '二肖不中', 'playtype': [73], 'tableDta': [] },
+            { 'name': '三肖中', 'playtype': [74], 'tableDta': [] },
+            { 'name': '三肖不中', 'playtype': [75], 'tableDta': [] },
+            { 'name': '四肖中', 'playtype': [76], 'tableDta': [] },
+            { 'name': '四肖不中', 'playtype': [77], 'tableDta': [] },
+            { 'name': '五肖中', 'playtype': [78], 'tableDta': [] },
+            { 'name': '五肖不中', 'playtype': [79], 'tableDta': [] }
+          ],
+          'PlayZt': 0,
+          'opendata': [72, 73, 74, 75, 76, 77, 78, 79]
+        },
+        {
+          'group_name': '尾数连',
+          'total_num': [{
+            'PlayType': [80],
+            'name': '二尾中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [81],
+            'name': '二尾不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [82],
+            'name': '三尾中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [83],
+            'name': '三尾不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [84],
+            'name': '四尾中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [85],
+            'name': '四尾不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [86],
+            'name': '五尾中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [87],
+            'name': '五尾不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [
+            { 'name': '二尾中', 'data': [80] },
+            { 'name': '二尾不中', 'data': [81] },
+            { 'name': '三尾中', 'data': [82] },
+            { 'name': '三尾不中', 'data': [83] },
+            { 'name': '四尾中', 'data': [84] },
+            { 'name': '四尾不中', 'data': [85] },
+            { 'name': '五尾中', 'data': [86] },
+            { 'name': '五尾不中', 'data': [87] }
+          ],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '二尾中', 'playtype': [80], 'tableDta': [] },
+            { 'name': '二尾不中', 'playtype': [81], 'tableDta': [] },
+            { 'name': '三尾中', 'playtype': [82], 'tableDta': [] },
+            { 'name': '三尾不中', 'playtype': [83], 'tableDta': [] },
+            { 'name': '四尾中', 'playtype': [84], 'tableDta': [] },
+            { 'name': '四尾不中', 'playtype': [85], 'tableDta': [] },
+            { 'name': '五尾中', 'playtype': [86], 'tableDta': [] },
+            { 'name': '五尾不中', 'playtype': [87], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [80, 81, 82, 83, 84, 85, 86, 87]
+        },
+        {
+          'group_name': '不中',
+          'total_num': [{
+            'PlayType': [88],
+            'name': '四不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [89],
+            'name': '五不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [90],
+            'name': '六不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [91],
+            'name': '七不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [92],
+            'name': '八不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [93],
+            'name': '九不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [94],
+            'name': '十不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [95],
+            'name': '十一不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [96],
+            'name': '十二不中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '四不中',
+            'data': [88]
+          }, {
+            'name': '五不中',
+            'data': [89]
+          }, {
+            'name': '六不中',
+            'data': [90]
+          }, {
+            'name': '七不中',
+            'data': [91]
+          }, {
+            'name': '八不中',
+            'data': [92]
+          }, {
+            'name': '九不中',
+            'data': [93]
+          }, {
+            'name': '十不中',
+            'data': [94]
+          }, {
+            'name': '十一不中',
+            'data': [95]
+          }, {
+            'name': '十二不中',
+            'data': [96]
+          }],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '四不中', 'playtype': [88], 'tableDta': [] },
+            { 'name': '五不中', 'playtype': [89], 'tableDta': [] },
+            { 'name': '六不中', 'playtype': [90], 'tableDta': [] },
+            { 'name': '七不中', 'playtype': [91], 'tableDta': [] },
+            { 'name': '八不中', 'playtype': [92], 'tableDta': [] },
+            { 'name': '九不中', 'playtype': [93], 'tableDta': [] },
+            { 'name': '十不中', 'playtype': [94], 'tableDta': [] },
+            { 'name': '十一不中', 'playtype': [95], 'tableDta': [] },
+            { 'name': '十二不中', 'playtype': [96], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [88, 89, 90, 91, 92, 93, 94, 95, 96]
+        },
+        {
+          'group_name': '中一',
+          'total_num': [{
+            'PlayType': [97],
+            'name': '五中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [98],
+            'name': '六中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [99],
+            'name': '七中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [100],
+            'name': '八中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [101],
+            'name': '九中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [102],
+            'name': '十中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '五中一',
+            'data': [97]
+          }, {
+            'name': '六中一',
+            'data': [98]
+          }, {
+            'name': '七中一',
+            'data': [99]
+          }, {
+            'name': '八中一',
+            'data': [100]
+          }, {
+            'name': '九中一',
+            'data': [101]
+          }, {
+            'name': '十中一',
+            'data': [102]
+          }],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '五中一', 'playtype': [97], 'tableDta': [] },
+            { 'name': '六中一', 'playtype': [98], 'tableDta': [] },
+            { 'name': '七中一', 'playtype': [99], 'tableDta': [] },
+            { 'name': '八中一', 'playtype': [100], 'tableDta': [] },
+            { 'name': '九中一', 'playtype': [101], 'tableDta': [] },
+            { 'name': '十中一', 'playtype': [102], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [97, 97, 99, 100, 101, 102]
+        },
+        {
+          'group_name': '任中',
+          'total_num': [{
+            'PlayType': [97],
+            'name': '五中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [98],
+            'name': '六中一',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [103],
+            'name': '一粒任中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [104],
+            'name': '二粒任中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [105],
+            'name': '三粒任中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [106],
+            'name': '四粒任中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [107],
+            'name': '五粒任中',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '一粒任中',
+            'data': [103]
+          }, {
+            'name': '二粒任中',
+            'data': [104]
+          }, {
+            'name': '三粒任中',
+            'data': [105]
+          }, {
+            'name': '四粒任中',
+            'data': [106]
+          }, {
+            'name': '五粒任中',
+            'data': [107]
+          }],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '一粒任中', 'playtype': [103], 'tableDta': [] },
+            { 'name': '二粒任中', 'playtype': [104], 'tableDta': [] },
+            { 'name': '三粒任中', 'playtype': [105], 'tableDta': [] },
+            { 'name': '四粒任中', 'playtype': [106], 'tableDta': [] },
+            { 'name': '五粒任中', 'playtype': [107], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [103, 104, 105, 106, 107]
+        },
+        {
+          'group_name': '七码',
+          'total_num': [{
+            'PlayType': [45, 46, 47, 48, 49, 50, 51, 52],
+            'name': '七码',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '七码',
+            'data': [45, 46, 47, 48, 49, 50, 51, 52]
+          }],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '七码', 'playtype': [45, 46, 47, 48, 49, 50, 51, 52], 'tableDta': [] }
+          ],
+          'PlayZt': 0,
+          'opendata': [45, 46, 47, 48, 49, 50, 51, 52]
+        },
+        {
+          'group_name': '七色波',
+          'total_num': [{
+            'PlayType': [53, 54, 55],
+            'name': '七色波',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [{
+            'name': '七色波',
+            'data': [53, 54, 55]
+          }],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '七色波', 'playtype': [53, 54, 55], 'tableDta': [] }
+          ],
+          'PlayZt': 0,
+          'opendata': [53, 54, 55]
+        },
+        {
+          'group_name': '合肖',
+          'total_num': [{
+            'PlayType': [62],
+            'name': '二肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [63],
+            'name': '三肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [64],
+            'name': '四肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [65],
+            'name': '五肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [66],
+            'name': '六肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [67],
+            'name': '七肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [68],
+            'name': '八肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [69],
+            'name': '九肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [70],
+            'name': '十肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }, {
+            'PlayType': [71],
+            'name': '十一肖',
+            'PlayZt': 0,
+            'BetMoney': 0,
+            'Ty': 0,
+            'Zcje': 0,
+            'Zcty': 0
+          }],
+          'play_type': [
+            { 'name': '二肖', 'data': [62] },
+            { 'name': '三肖', 'data': [63] },
+            { 'name': '四肖', 'data': [64] },
+            { 'name': '五肖', 'data': [65] },
+            { 'name': '六肖', 'data': [66] },
+            { 'name': '七肖', 'data': [67] },
+            { 'name': '八肖', 'data': [68] },
+            { 'name': '九肖', 'data': [69] },
+            { 'name': '十肖', 'data': [70] },
+            { 'name': '十一肖', 'data': [71] },
+          ],
+          'alignModel': 4,
+          'tableNum': [
+            { 'name': '二肖', 'playtype': [62], 'tableDta': [] },
+            { 'name': '三肖', 'playtype': [63], 'tableDta': [] },
+            { 'name': '四肖', 'playtype': [64], 'tableDta': [] },
+            { 'name': '五肖', 'playtype': [65], 'tableDta': [] },
+            { 'name': '六肖', 'playtype': [66], 'tableDta': [] },
+            { 'name': '七肖', 'playtype': [67], 'tableDta': [] },
+            { 'name': '八肖', 'playtype': [68], 'tableDta': [] },
+            { 'name': '九肖', 'playtype': [69], 'tableDta': [] },
+            { 'name': '十肖', 'playtype': [70], 'tableDta': [] },
+            { 'name': '十一肖', 'playtype': [71], 'tableDta': [] },
+          ],
+          'PlayZt': 0,
+          'opendata': [62, 63, 64, 65, 66, 67, 68, 69, 70, 71]
+        }
+      ]
+    },
     handleTotal(data) {
+      if (data.length == 0) {
+        this.resetPlay_Grpup_data()
+      }
       var All = {
         'BetMoney': 0,
         'Ty': 0,
@@ -1867,7 +3073,7 @@ export default {
               All.Zcty += Zcty
             }
             if (a[key2].BetMoney != BetMoney || a[key2].Ty != Ty || a[key2].Zcje != Zcje || a[key2].Zcty != Zcty) {
-              this.animation[key1] = key1 == this.default_Group ? 'topbbs' : 'topbb'
+              // this.animation[key1] = key1 == this.default_Group ? 'topbbs' : 'topbb'
               if (a[key2].BetMoney != BetMoney) { a[key2].BetMoney = BetMoney }
               if (a[key2].Ty != Ty) { a[key2].Ty = Ty }
               if (a[key2].Zcje != Zcje) { a[key2].Zcje = Zcje }
@@ -1880,7 +3086,7 @@ export default {
       if (JSON.stringify(this.All_total) != JSON.stringify(All)) {
         this.All_total = All
       }
-      setTimeout(() => { this.animation = []; }, 5000);
+      // setTimeout(() => { this.animation = []; }, 5000);
     },
     handleTotalLong(data, num) {
       if (num == -1) {
@@ -2212,3 +3418,145 @@ export default {
 
 }
 </script>
+<style scoped>
+/* Existing styles... */
+
+/* Styles for the topheii element */
+.game_herad_mueu {
+  width: 100%;
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.game-tab-container {
+  display: flex;
+  overflow: hidden;
+}
+
+.game-tab {
+  min-width: 120px;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-tab:hover {
+  background-color: transparent;
+}
+
+.game-tab.active {
+  background-color: transparent;
+  border-bottom: 2px solid #1e90ff;
+  font-weight: bold;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 4px 15px;
+}
+
+.tab-name {
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tab-count {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.game_info_r_top {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  background-color: #f6f6f6;
+  border-top: 1px solid #e0e0e0;
+}
+
+.game_info_r_top_result_box {
+  display: flex;
+  align-items: center;
+}
+
+.game_info_r_qishu {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.game_info_r_result {
+  display: flex;
+  align-items: center;
+}
+
+.result_num {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  font-weight: bold;
+  /* color: white; */
+}
+
+.ball_red {
+  background-color: #ff4444;
+}
+
+.ball_blue {
+  background-color: #3399ff;
+}
+
+.ball_green {
+  background-color: #33cc33;
+}
+
+.button-group-tabs {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+}
+
+.button-group-tabs .el-button-group {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.tab-button {
+  border-radius: 20px !important;
+  margin: 0 3px !important;
+  padding: 8px 15px !important;
+  background-color: #d7def2;
+  color: #333333 !important;
+  border: none !important;
+  height: 32px !important;
+  line-height: 1 !important;
+  font-size: 13px !important;
+}
+
+.tab-button.tab-active {
+  background-color: #0088ff !important;
+  color: #ffffff !important;
+}
+
+/* 覆盖element-ui默认样式 */
+.el-button-group .el-button {
+  margin-left: 3px !important;
+  margin-right: 3px !important;
+}
+
+.el-button-group .el-button:first-child,
+.el-button-group .el-button:last-child {
+  border-radius: 20px !important;
+}
+</style>
