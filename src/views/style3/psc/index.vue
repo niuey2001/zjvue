@@ -28,33 +28,7 @@
             </el-dropdown>
           </div>
         </div>
-        <div class="game_info_r_top"
-          v-if="home_data.result && home_data.result.Issue && home_data.result != '' && UserInfo && UserInfo.items">
-          <div class="game_info_r_top_result_box" v-if="isshowresult">
-            <div class="game_info_r_qishu">
-              <span>{{ home_data.result.Issue }} 期</span>
-            </div>
-            <div class="game_info_r_result">
-              <span v-for="item in 6">
-                <div class="result_num"
-                  :class="UserInfo.items[home_data.result['Ball' + item]].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 68 ? 'ball_green' : ''">
-                  <span>{{ UserInfo.items[home_data.result['Ball' + item]].PlayNumber }}</span>
-                </div>
-                <div>{{ sxData[home_data.result['NumberSx' + item]] }}</div>
-              </span>
-              <span>
-                <div>+</div>
-              </span>
-              <span>
-                <div class="result_num"
-                  :class="UserInfo.items[home_data.result['Ball7']].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball7']].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball7']].NumberBs == 68 ? 'ball_green' : ''">
-                  <span>{{ UserInfo.items[home_data.result['Ball7']].PlayNumber }}</span>
-                </div>
-                <div>{{ sxData[home_data.result['NumberSx7']] }}</div>
-              </span>
-            </div>
-          </div>
-        </div>
+   
       </div>
     </div>
     <div class="game_herad">
@@ -113,6 +87,33 @@
           <span class="psc_odds_box_topbtn" @click="initializationOdds()">
             还原赔率
           </span>
+        </div>
+        <div class="game_info_r_top"
+          v-if="home_data.result && home_data.result.Issue && home_data.result != '' && UserInfo && UserInfo.items">
+          <div class="game_info_r_top_result_box" v-if="isshowresult">
+            <div class="game_info_r_qishu">
+              <span>{{ home_data.result.Issue }} 期</span>
+            </div>
+            <div class="game_info_r_result">
+              <span v-for="item in 6">
+                <div class="result_num"
+                  :class="UserInfo.items[home_data.result['Ball' + item]].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 68 ? 'ball_green' : ''">
+                  <span>{{ UserInfo.items[home_data.result['Ball' + item]].PlayNumber }}</span>
+                </div>
+                <div>{{ sxData[home_data.result['NumberSx' + item]] }}</div>
+              </span>
+              <span>
+                <div>+</div>
+              </span>
+              <span>
+                <div class="result_num"
+                  :class="UserInfo.items[home_data.result['Ball7']].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball7']].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball7']].NumberBs == 68 ? 'ball_green' : ''">
+                  <span>{{ UserInfo.items[home_data.result['Ball7']].PlayNumber }}</span>
+                </div>
+                <div>{{ sxData[home_data.result['NumberSx7']] }}</div>
+              </span>
+            </div>
+          </div>
         </div>
         <div class="psc_issue_open">
           <span>{{ GameList.issue }}期</span>
@@ -273,33 +274,24 @@
       <div class="titlem bodynav dialog-padding">
         赔率设置
       </div>
-      <el-form ref="oddsset" :model="oddssetdata" label-width="0px" class="custom-form-style">
-        <table border="1" class="el-form-table">
-          <tr>
-            <td class="el-form-table-label">号码</td>
-            <td class="el-form-table-tr" style="font-weight:600;">
-              <div class="play_text ball_n" style="white-space: nowrap;"
-                :class="oddssetdata.NumberBs == 66 ? 'ball_red' : oddssetdata.NumberBs == 67 ? 'ball_blue' : oddssetdata.NumberBs == 68 ? 'ball_green' : ''"
-                :style="{ 'color': oddssetdata.NumberItem == 66 || [90, 91, 92, 93, 102, 103, 104, 105, 177].includes(oddssetdata.NumberItem) ? 'red' : oddssetdata.NumberItem == 67 || [94, 95, 96, 97, 106, 107, 108, 109, 178].includes(oddssetdata.NumberItem) ? 'blue' : oddssetdata.NumberItem == 68 || [98, 99, 100, 101, 110, 111, 112, 113, 179].includes(oddssetdata.NumberItem) ? 'green' : '' }">
-                {{ oddssetdata.PlayNumber }}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <td class="el-form-table-label">赔率</td>
-            <td>
-              <el-form-item label="">
-                <el-input style="width:100px;" v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input>
-              </el-form-item>
-            </td>
-          </tr>
-          <tr>
-            <td class="el-form-table-label"></td>
-            <td colspan="3" class="el-form-table-footer">
-              <span class="game_box_topbtn" @click="oddssetPost()">确认修改</span>
-            </td>
-          </tr>
-        </table>
+      <el-form ref="oddsset" :model="oddssetdata" label-width="80px" class="custom-form-style">
+        <div class="form-card">
+          <el-form-item label="号码">
+            <div class="play_text ball_n" style="white-space: nowrap; font-weight:600;"
+              :class="oddssetdata.NumberBs == 66 ? 'ball_red' : oddssetdata.NumberBs == 67 ? 'ball_blue' : oddssetdata.NumberBs == 68 ? 'ball_green' : ''"
+              :style="{ 'color': oddssetdata.NumberItem == 66 || [90, 91, 92, 93, 102, 103, 104, 105, 177].includes(oddssetdata.NumberItem) ? 'red' : oddssetdata.NumberItem == 67 || [94, 95, 96, 97, 106, 107, 108, 109, 178].includes(oddssetdata.NumberItem) ? 'blue' : oddssetdata.NumberItem == 68 || [98, 99, 100, 101, 110, 111, 112, 113, 179].includes(oddssetdata.NumberItem) ? 'green' : '' }">
+              {{ oddssetdata.PlayNumber }}
+            </div>
+          </el-form-item>
+          
+          <el-form-item label="赔率">
+            <el-input style="width:120px;" v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input>
+          </el-form-item>
+          
+          <div class="form-footer">
+            <el-button type="primary" class="submit-btn" @click="oddssetPost()">确认修改</el-button>
+          </div>
+        </div>
       </el-form>
     </el-dialog>
   </div>
@@ -2468,7 +2460,7 @@ export default {
 /* Styles for the topheii element */
 .game_herad_mueu {
   width: 100%;
-  background-color: #fff;
+  background-color: #eef0f8;
   overflow: hidden;
 }
 
@@ -2522,8 +2514,8 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 5px 10px;
-  background-color: #f6f6f6;
-  border-top: 1px solid #e0e0e0;
+  /* background-color: #f6f6f6; */
+  /* border-top: 1px solid #e0e0e0; */
 }
 
 .game_info_r_top_result_box {
@@ -2602,5 +2594,45 @@ export default {
 .el-button-group .el-button:first-child,
 .el-button-group .el-button:last-child {
   border-radius: 20px !important;
+}
+
+/* 自定义表单样式 */
+.custom-form-style {
+  padding: 10px;
+}
+
+.form-card {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-btn {
+  padding: 8px 20px;
+  background-color: #0088ff;
+  border-color: #0088ff;
+}
+
+.submit-btn:hover {
+  background-color: #0077ee;
+  border-color: #0077ee;
+}
+
+.el-form-item {
+  margin-bottom: 18px;
+}
+
+/* 球号样式 */
+.play_text.ball_n {
+  /* padding: 6px 12px; */
+  border-radius: 4px;
+  display: inline-block;
 }
 </style>

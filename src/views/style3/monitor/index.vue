@@ -319,11 +319,11 @@
         </el-table>
       </div>
       <div class="main-boxdiv-bottom"></div>
-      <el-dialog v-model="bhdia" title="" :class="bhtype == 2 ? 'Bh-dialogs' : 'Bh-dialog'">
+      <el-dialog v-model="bhdia" title="" :class="bhtype == 2 ? 'Bh-dialogs' : 'Bh-dialog'" :append-to-body="true">
         <div class="titlem bodynav dialog-padding">
           <span v-if="default_Group == 0">特码</span>{{ bhname }}补货
         </div>
-        <div class="psc_odds_box_top" style="background:#f8d096;">
+        <div class="psc_odds_box_top" style="max-height: calc(100vh - 300px); overflow: auto;">
 
           <div>
             <span>补货账号</span>
@@ -367,10 +367,11 @@
           </div>
 
         </div>
-        <div class="main-boxdiv1" style="width: 100%;height:89%;">
-          <el-table border class="monitor_table monitor_tabledia" height="100%" style="width: 100%"
-            :header-cell-class-name="'trheader'" :data="ShowListData" v-loading="LoadingBh">
-            <el-table-column type="index" label="序号" />
+        <div class="main-boxdiv1" style="width: 100%;max-height: calc(100vh - 300px);overflow: visible;">
+          <el-table border class="monitor_table monitor_tabledia" style="width: 100%"
+            height="calc(100vh - 300px)" :header-cell-class-name="'trheader'"
+            :data="ShowListData" v-loading="LoadingBh">
+            <el-table-column type="index" width="100" label="序号" />
             <el-table-column label="球号">
               <template #default="{ row, $index }">
                 <span class="play_text ball_n" :style="GetnumberStyleBh(row)">
@@ -407,7 +408,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="el-form-table-footer" style="text-align: center;">
+          <div style="text-align: center; margin-top: 20px; margin-bottom: 10px;">
             <el-button type="primary" @click="OpenBhSubmit()">提交补货</el-button>
           </div>
         </div>
@@ -3424,7 +3425,7 @@ export default {
 /* Styles for the topheii element */
 .game_herad_mueu {
   width: 100%;
-  background-color: #fff;
+  background-color: #eef0f8;
   overflow: hidden;
 }
 
