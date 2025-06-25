@@ -2568,6 +2568,7 @@ export default {
   background-color: #ff4444;
 }
 
+
 .ball_blue {
   letter-spacing: 0;
   width: 28px;
@@ -2671,7 +2672,7 @@ export default {
 /* 球号样式 */
 .play_text.ball_n {
   /* padding: 6px 12px; */
-  border-radius: 4px;
+  /* border-radius: 4px; */
   display: inline-block;
 }
 </style>

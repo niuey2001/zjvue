@@ -412,7 +412,7 @@ export default {
 }
 
 .el-header {
-  height: 75px;
+  height: 33px;
   padding: 0px;
 }
 

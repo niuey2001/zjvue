@@ -53,6 +53,7 @@ body {
   line-height: 16px;
   margin-bottom: 5px;
   margin-top: 5px;
+  background: #eef0f8;
   /* border-right: 1px solid #000;
   border-bottom: 1px solid #000;
   border-top: 1px solid #000;
@@ -986,3 +987,49 @@ select {
   text-decoration: line-through;
   color: #5a5a5a;
 }
+
+
+
+/* Global table styles */
+.el-table th,
+.el-table td {
+  border: 1px solid #999 !important;
+}
+
+.el-table--border,
+.el-table--group {
+  border: 1px solid #999 !important;
+}
+
+.el-table::before,
+.el-table::after {
+  background-color: #999 !important;
+  height: 1px !important;
+}
+
+.el-table--border::after,
+.el-table--group::after {
+  width: 1px !important;
+  background-color: #999 !important;
+}
+
+.el-table__fixed-right::before,
+.el-table__fixed::before {
+  background-color: #999 !important;
+  height: 1px !important;
+}
+
+/* Additional styles for better visibility */
+/* .el-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.el-table__header th {
+  background-color: #f5f7fa !important;
+  font-weight: bold !important;
+}
+
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: #fafafa !important;
+} */

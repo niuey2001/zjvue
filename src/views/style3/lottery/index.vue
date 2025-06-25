@@ -1,6 +1,6 @@
 <template>
   <div class="main-boxdiv" style="width: 800px;">
-    <el-form v-if="editGame != ''" :model="editGame" label-width="150px" class="el-form-table">
+    <el-form v-if="editGame != ''" :model="editGame" label-width="150px" style="margin-top: 10px;">
       <el-form-item label="彩种：">
         <el-select v-model="lottery_id" @change="getGameIndex" placeholder="请选择" style="width: 100%">
           <el-option v-for="item in GameList" :key="item.lottery_id" :label="item.name"

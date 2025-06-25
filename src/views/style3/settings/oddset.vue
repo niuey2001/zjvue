@@ -18,9 +18,9 @@
           <option v-for="(item, index) in GameList" :label="item.name" :value="parseInt(item.lottery_id)" />
         </select>
       </span>
-      <el-button type="primary" @click="edit()">保存赔率设置</el-button>
-      <el-button type="primary" @click="reset()">重置输入</el-button>
-      <el-button type="primary" @click="empty()">清空赔率</el-button>
+      <el-button type="primary" size="small" @click="edit()">保存赔率设置</el-button>
+      <el-button type="primary" size="small" @click="reset()">重置输入</el-button>
+      <el-button type="primary" size="small" @click="empty()">清空赔率</el-button>
     </div>
     <el-table border :data="editData" :header-cell-class-name="'trheader'" :height="clientHeight2 + 'px'"
       style="width: 100%;">

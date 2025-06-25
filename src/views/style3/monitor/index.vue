@@ -130,7 +130,7 @@
         :class="[Play_Grpup_data[default_Group].alignModel == 3 ? 'monitor_table_align' : '', Play_Grpup_data[default_Group].alignModel == 2 ? 'monitor_alignModel2_box' : '']">
         <el-table v-for="(items, indexs) in getTableData()" border class="monitor_table" :span-method="objectSpanMethod"
           :header-cell-class-name="'trheader'" :data="items.tableData"
-          :height="Play_Grpup_data[default_Group].alignModel != 2 ? clientHeight1 + 'px' : 'auto'"
+          :height="Play_Grpup_data[default_Group].alignModel != 2 ? clientHeight1 - 150 + 'px' : 'auto'"
           :style="GetTableStyle()" :cell-class-name="cellClassName">
           <el-table-column v-if="Play_Grpup_data[default_Group].alignModel == 2" width="50">
             <template #header>
@@ -323,7 +323,7 @@
         <div class="titlem bodynav dialog-padding">
           <span v-if="default_Group == 0">特码</span>{{ bhname }}补货
         </div>
-        <div class="psc_odds_box_top" style="max-height: calc(100vh - 300px); overflow: auto;">
+        <div class="psc_odds_box_top" style="max-height: calc(100vh - 300px); overflow: hidden;">
 
           <div>
             <span>补货账号</span>
@@ -367,10 +367,9 @@
           </div>
 
         </div>
-        <div class="main-boxdiv1" style="width: 100%;max-height: calc(100vh - 300px);overflow: visible;">
-          <el-table border class="monitor_table monitor_tabledia" style="width: 100%"
-            height="calc(100vh - 300px)" :header-cell-class-name="'trheader'"
-            :data="ShowListData" v-loading="LoadingBh">
+        <div class="main-boxdiv1" style="width: 100%;max-height: calc(100vh - 300px);overflow: hidden;">
+          <el-table border class="monitor_table monitor_tabledia" style="width: 100%" height="calc(100vh - 300px)"
+            :header-cell-class-name="'trheader'" :data="ShowListData" v-loading="LoadingBh">
             <el-table-column type="index" width="100" label="序号" />
             <el-table-column label="球号">
               <template #default="{ row, $index }">
@@ -3358,7 +3357,7 @@ export default {
     },
     OpenBhSubmit() {
       var ShowListDatas = []
-      var html = '<div class="maxboxs"><table border="1" style="max-height:500px;overflow:scroll" class="el-form-table">'
+      var html = '<div class="maxboxs"><table border="1" style="max-height:500px;overflow:hidden" class="el-form-table">'
       html += '<tr class="trheader"><td>补货号码</td><td>盘口</td><td>赔率</td><td>退水</td><td>补货金额</td></tr>'
       for (let key in this.ShowListData) {
         if (parseInt(this.ShowListData[key].BetMoney) > 0) {
@@ -3524,7 +3523,7 @@ export default {
 
 .button-group-tabs {
   display: flex;
-  overflow-x: auto;
+  overflow-x: hidden;
   width: 100%;
 }
 

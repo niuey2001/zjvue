@@ -1,6 +1,64 @@
 <template>
   <div class="main-boxdiv reportbox" v-loading="loading">
-    <div v-if="!showreport" style="margin:5px auto;width:800px;">
+    <div class="search-container" style="background-color: #eef1f6; padding: 10px;">
+      <div class="search-row" style="display: flex; align-items: center; margin-bottom: 5px;">
+        <div class="search-item" style="margin-right: 15px; display: flex; align-items: center;">
+          <span style="width: 70px;">开始日期</span>
+          <el-date-picker v-model="selectData.action_time" type="date" :clearable="false" format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD" style="width:150px;" placeholder="选择日期">
+          </el-date-picker>
+        </div>
+        <div class="search-item" style="margin-right: 15px; display: flex; align-items: center;">
+          <span style="width: 70px;">结束日期</span>
+          <el-date-picker v-model="selectData.end_time" type="date" :clearable="false" format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD" style="width:150px;" placeholder="选择日期">
+          </el-date-picker>
+        </div>
+        <div class="date-buttons" style="display: flex; align-items: center;">
+          <el-button :class="{ 'button-active': datetype == 1 }" size="small"
+            @click="datetype = 1, getDateTimes()">今日</el-button>
+          <el-button :class="{ 'button-active': datetype == 2 }" size="small"
+            @click="datetype = 2, getDateTimes()">昨日</el-button>
+          <el-button :class="{ 'button-active': datetype == 3 }" size="small"
+            @click="datetype = 3, getDateTimes()">前日</el-button>
+          <el-button :class="{ 'button-active': datetype == 4 }" size="small"
+            @click="datetype = 4, getDateTimes()">本周</el-button>
+          <el-button :class="{ 'button-active': datetype == 5 }" size="small"
+            @click="datetype = 5, getDateTimes()">上周</el-button>
+          <el-button :class="{ 'button-active': datetype == 6 }" size="small"
+            @click="datetype = 6, getDateTimes()">本月</el-button>
+          <el-button :class="{ 'button-active': datetype == 7 }" size="small"
+            @click="datetype = 7, getDateTimes()">上月</el-button>
+        </div>
+      </div>
+      <div class="search-row" style="display: flex; align-items: center;">
+        <div class="search-item" style="margin-right: 15px; display: flex; align-items: center;">
+          <span style="width: 70px;">彩种名称</span>
+          <el-select v-model="selectid" @change="handleCheckedCitiesChanges" style="width: 150px;">
+            <el-option :value="0" label="全部"></el-option>
+            <el-option v-for="items in home_data.GameList" :key="items.lottery_id" :value="parseInt(items.lottery_id)"
+              :label="items.name"></el-option>
+          </el-select>
+        </div>
+        <div class="search-item" style="margin-right: 15px; display: flex; align-items: center;">
+          <span style="width: 70px;">期号</span>
+          <el-input v-model="periodNumber" placeholder="请输入内容" style="width: 150px;"></el-input>
+        </div>
+        <div class="search-item" style="margin-right: 15px; display: flex; align-items: center;">
+          <span style="width: 70px;">结算状态</span>
+          <div style="display: flex; align-items: center;">
+            <el-radio-group v-model="settleStatus" style="display: flex;">
+              <el-radio :label="1">已结算</el-radio>
+              <el-radio :label="0">未结算</el-radio>
+            </el-radio-group>
+          </div>
+        </div>
+        <div class="search-item" style="margin-left: 15px;">
+          <el-button type="primary" size="small" style="background-color: #409EFF;" @click="search">查询</el-button>
+        </div>
+      </div>
+    </div>
+    <div v-if="!showreport" style="margin:5px auto;width:800px; display: none;">
       <div class="titlem bodynav">
         报表查询
       </div>
@@ -57,7 +115,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="showreport = true, getdata()">查 询 报 表</el-button>
+          <el-button type="primary" size="small" @click="showreport = true, getdata()">查 询 报 表</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -152,17 +210,18 @@
           </el-date-picker>
         </span>
         <span>
-          <el-button type="primary" @click="sendname = '', selectData.PlayGroup = 0, getdata()">查 询 报 表</el-button>
+          <el-button type="primary" size="small" @click="sendname = '', selectData.PlayGroup = 0, getdata()">查 询 报
+            表</el-button>
         </span>
         <span style="position: fixed;right: -6px;">
           <span class="topbtn" v-if="nowmember != '' && nowmember.top_id != 0" @click="goback()">返回</span>
         </span>
       </div>
       <el-table border :data="tableData" :height="[tableheight]" style="width: 100%;" tooltip-effect="dark" show-summary
-        :summary-method="getSummaries" :header-cell-style="headerCellStylereptot" :cell-style="reprotlistCellStyle"
-        :header-cell-class-name="'trheader'" @row-click="handleRowClick">
-        <el-table-column type="index" label="序号" width="50" />
-        <el-table-column :label="getheadertitle()" show-overflow-tooltip>
+        :summary-method="getSummaries" :header-cell-class-name="'trheader'" @row-click="handleRowClick"
+        :header-cell-style="{ 'border': '1px solid #999' }" :cell-style="reprotlistCellStyle">
+        <el-table-column type="index" label="序号" width="60" />
+        <el-table-column :label="getheadertitle()" width="120" show-overflow-tooltip>
           <template #default="{ row }">
             <span v-if="selectData.report_type == 2"
               @click="sendname = getPlayGroup(row), selectData.PlayGroup = row.PlayGroup, selectData.report_type = 1, getdata()">
@@ -180,23 +239,23 @@
                 v-if="row.Account != '直属会员' && row.Account != '补货'">({{ row.Name }})</span></span>
           </template>
         </el-table-column>
-        <el-table-column prop="Num" label="笔数" />
-        <el-table-column prop="BetMoney" label="下注总额" show-overflow-tooltip>
+        <el-table-column prop="Num" label="笔数" width="70" />
+        <el-table-column prop="BetMoney" label="下注总额" width="90" show-overflow-tooltip>
           <template #default="{ row }">
             <span>{{ row.Type == 2 ? '' : row.BetMoney }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="ValidBetMoney" label="有效金额" show-overflow-tooltip>
+        <el-table-column prop="ValidBetMoney" label="有效金额" width="90" show-overflow-tooltip>
           <template #default="{ row }">
             <span>{{ row.Type == 2 ? '' : row.ValidBetMoney }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="Ty" label="退佣" show-overflow-tooltip>
+        <el-table-column prop="Ty" label="退佣" width="70" show-overflow-tooltip>
           <template #default="{ row }">
             <span>{{ row.Type == 2 ? '' : parseFloat(row.Ty.toFixed(2)) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="Yk" label="会员盈亏" show-overflow-tooltip>
+        <el-table-column prop="Yk" label="会员盈亏" width="90" show-overflow-tooltip>
           <template #default="{ row }">
             <span>{{ row.Type == 2 ? '' : parseFloat(row.Yk.toFixed(2)) }}</span>
           </template>
@@ -328,6 +387,8 @@ export default {
       MemberType: ['集团', '总监', '一级代理', '二级代理', '三级代理', '四级代理', '五级代理', '六级代理', '七级代理', '八级代理', '九级代理', '会员'],
       loading: false,
       selectid: 0,
+      periodNumber: '',
+      settleStatus: 1,
       selectData: {
         id: 0,
         lottery_id: [],
@@ -364,7 +425,7 @@ export default {
     tableData: {
       handler(newVal, oldVal) {
         if (this.tableData.length > 15) {
-          this.tableheight = this.clientHeight2 + 45
+          this.tableheight = this.clientHeight2
           this.tableheight = this.tableheight + "px"
         } else {
           this.tableheight = 'auto'
@@ -372,6 +433,9 @@ export default {
       },
       deep: false
     },
+    settleStatus(val) {
+      this.selectData.is_settle = val === 1;
+    }
   },
   created() {
     var a = this.$store.state.UserInfo
@@ -406,21 +470,6 @@ export default {
       }
       return a
     },
-    // handleCheckAllChange(val) {
-    //   this.selectData.lottery_id = val ? this.alllottery_id : [];
-    //   this.isIndeterminate = false;
-    //   this.getdata()
-    // },
-    // handleCheckedCitiesChange() {
-    //   let checkedCount = this.selectData.lottery_id.length;
-    //   this.checkAll = checkedCount === this.alllottery_id.length;
-    //   this.isIndeterminate = checkedCount > 0 && checkedCount < this.alllottery_id.length;
-    //   if(this.selectData.report_type==1){
-    //     this.selectData.PlayGroup=0
-    //     this.sendname=''
-    //   }
-    //   this.getdata()
-    // },
     handleCheckedCitiesChanges() {
       if (this.selectid == 0) {
         this.selectData.lottery_id = this.alllottery_id
@@ -751,6 +800,18 @@ export default {
         }
       });
       return sums;
+    },
+    search() {
+      this.selectData.is_settle = this.settleStatus === 1;
+
+      if (this.periodNumber) {
+        this.selectData.period = this.periodNumber;
+      } else {
+        delete this.selectData.period;
+      }
+
+      this.showreport = true;
+      this.getdata();
     }
   }
 
@@ -759,5 +820,43 @@ export default {
 <style scoped>
 .el-table .cell {
   text-align: left;
+}
+
+/* Add styles for the search interface */
+.search-container {
+  background-color: #eef1f6 !important;
+  border-radius: 4px;
+}
+
+.search-item span {
+  color: #606266;
+}
+
+.button-active {
+  background-color: #409EFF !important;
+  color: white !important;
+  border-color: #409EFF !important;
+}
+
+.el-button {
+  margin-right: 5px;
+}
+
+.el-radio {
+  margin-right: 20px;
+}
+
+/* Custom form control styles */
+:deep(.el-input__inner) {
+  height: 31px;
+  line-height: 31px;
+}
+
+:deep(.el-date-editor.el-input) {
+  width: 150px;
+}
+
+:deep(.el-select) {
+  width: 150px;
 }
 </style>

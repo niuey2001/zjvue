@@ -3,25 +3,25 @@
     <div class="mb-4 mb4_top">
       <span>{{ MemberType[componentsPoPdata.nowmember.type] }}:{{ componentsPoPdata.nowmember.account }}</span>
       <el-button-group>
-        <el-button type="primary" v-if="componentsPoPdata.nowmember.type < 10"
+        <el-button type="primary" size="small" v-if="componentsPoPdata.nowmember.type < 10"
           @click="opencomponentsBox('addCom', 1, '')">
           添加代理</el-button>
-        <el-button type="primary" v-if="componentsPoPdata.nowmember.type > 1"
+        <el-button type="primary" size="small" v-if="componentsPoPdata.nowmember.type > 1"
           @click="opencomponentsBox('addCom', 2, '')">
           添加直属会员</el-button>
-        <el-button v-if="componentsPoPdata.nowmember.type < 10"
+        <el-button size="small" v-if="componentsPoPdata.nowmember.type < 10"
           :class="componentsPoPdata.nowdata.type == 1 ? 'is-active' : ''"
           @click="componentsPoPdata.nowdata.type = 1, componentsPoPdata.nowdata.search = '', getdata()">直属代理 {{ total1
           }}</el-button>
-        <el-button v-if="componentsPoPdata.nowmember.type > 1"
+        <el-button size="small" v-if="componentsPoPdata.nowmember.type > 1"
           :class="componentsPoPdata.nowdata.type == 2 ? 'is-active' : ''"
           @click="componentsPoPdata.nowdata.type = 2, componentsPoPdata.nowdata.search = '', getdata()">直属会员 {{ total2
           }}</el-button>
-        <el-button v-if="componentsPoPdata.nowmember.type < 10"
+        <el-button size="small" v-if="componentsPoPdata.nowmember.type < 10"
           :class="componentsPoPdata.nowdata.type == 3 ? 'is-active' : ''"
           @click="componentsPoPdata.nowdata.type = 3, componentsPoPdata.nowdata.search = '', getdata()">全部代理 {{ total3
           }}</el-button>
-        <el-button v-if="componentsPoPdata.nowmember.type < 10"
+        <el-button size="small" v-if="componentsPoPdata.nowmember.type < 10"
           :class="componentsPoPdata.nowdata.type == 4 ? 'is-active' : ''"
           @click="componentsPoPdata.nowdata.type = 4, componentsPoPdata.nowdata.search = '', getdata()">全部会员 {{ total4
           }}</el-button>
@@ -40,7 +40,7 @@
         <input v-model="componentsPoPdata.nowdata.search" style="width: 100px" placeholder="请输入账号" />
       </span>
       <span>
-        <el-button type="primary" @click="getdata()">查询</el-button>
+        <el-button type="primary" size="small" @click="getdata()">查询</el-button>
       </span>
       <span style="margin-left:5px">信用额度:</span>
       <span style="color:red;padding:0px 5px">{{ componentsPoPdata.nowmember.ts }}</span>
@@ -79,11 +79,10 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-table border :header-cell-class-name="'trheader'"
-      v-if="componentsPoPdata.nowdata.type == 1 || componentsPoPdata.nowdata.type == 3" ref="multipleTableRef"
-      :data="tableData" :cell-class-name="tableCellClassName" :height="clientHeight2 + 'px'" style="width: 100%"
-      @cell-click="editCell">
-      <el-table-column type="index" label="序号" width="55" />
+    <el-table border v-if="componentsPoPdata.nowdata.type == 1 || componentsPoPdata.nowdata.type == 3"
+      ref="multipleTableRef" :data="tableData" :height="clientHeight2 + 'px'" style="width: 100%" @cell-click="editCell"
+      header-cell-class-name="trheader">
+      <el-table-column type="index" label="序号1" width="55" />
       <el-table-column prop="account" label="账号" width="105">
         <template #default="{ row }">
           <span class="text_nowrap" @click="changgeAccount(row)" :title="row.account">{{ row.account }}</span>
@@ -171,9 +170,9 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-table border :header-cell-class-name="'trheader'"
-      v-if="componentsPoPdata.nowdata.type == 2 || componentsPoPdata.nowdata.type == 4" ref="multipleTableRef"
-      :data="tableData" :height="clientHeight2 + 'px'" style="width: 100%" @cell-click="editCell">
+    <el-table border v-if="componentsPoPdata.nowdata.type == 2 || componentsPoPdata.nowdata.type == 4"
+      ref="multipleTableRef" :data="tableData" :height="clientHeight2 + 'px'" style="width: 100%"
+      @cell-click="editCell">
       <el-table-column type="index" label="序号" width="55" />
       <el-table-column prop="account"
         :label="componentsPoPdata.nowdata.type < 3 ? MemberType[componentsPoPdata.nowmember.type] + '直属会员账号' : '会员账号'" />
@@ -633,5 +632,24 @@ export default {
 
 .el-checkbox {
   margin-right: 10px !important;
+}
+</style>
+
+<style>
+/* Global styles for table headers */
+.el-table .trheader {
+  background-color: #eef0f8 !important;
+  color: #111626;
+  font-weight: 700;
+  padding: 3px 0;
+  font-size: 14px;
+}
+
+.el-table th.trheader {
+  background-color: #eef0f8 !important;
+  color: #111626;
+  font-weight: 700;
+  padding: 3px 0;
+  font-size: 14px;
 }
 </style>
