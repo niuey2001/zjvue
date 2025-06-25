@@ -361,7 +361,7 @@ div {
 }
 
 
-.ball_red {
+/* .ball_red {
   background: url('@/assets/red.webp');
 }
 
@@ -371,7 +371,7 @@ div {
 
 .ball_blue {
   background: url('@/assets/blue.webp');
-}
+} */
 
 .color_red {
   color: red !important;

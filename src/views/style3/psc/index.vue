@@ -28,7 +28,7 @@
             </el-dropdown>
           </div>
         </div>
-   
+
       </div>
     </div>
     <div class="game_herad">
@@ -100,7 +100,7 @@
                   :class="UserInfo.items[home_data.result['Ball' + item]].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 68 ? 'ball_green' : ''">
                   <span>{{ UserInfo.items[home_data.result['Ball' + item]].PlayNumber }}</span>
                 </div>
-                <div>{{ sxData[home_data.result['NumberSx' + item]] }}</div>
+                <div class="ball_n">{{ sxData[home_data.result['NumberSx' + item]] }}</div>
               </span>
               <span>
                 <div>+</div>
@@ -110,7 +110,7 @@
                   :class="UserInfo.items[home_data.result['Ball7']].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball7']].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball7']].NumberBs == 68 ? 'ball_green' : ''">
                   <span>{{ UserInfo.items[home_data.result['Ball7']].PlayNumber }}</span>
                 </div>
-                <div>{{ sxData[home_data.result['NumberSx7']] }}</div>
+                <div class="ball_n">{{ sxData[home_data.result['NumberSx7']] }}</div>
               </span>
             </div>
           </div>
@@ -283,11 +283,11 @@
               {{ oddssetdata.PlayNumber }}
             </div>
           </el-form-item>
-          
+
           <el-form-item label="赔率">
             <el-input style="width:120px;" v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input>
           </el-form-item>
-          
+
           <div class="form-footer">
             <el-button type="primary" class="submit-btn" @click="oddssetPost()">确认修改</el-button>
           </div>
@@ -2545,15 +2545,54 @@ export default {
   /* color: white; */
 }
 
+.ball_n {
+  font-size: 14px;
+  color: #111626;
+  text-align: center;
+  width: 16px;
+  margin: 0 2px;
+  font-weight: 400;
+}
+
 .ball_red {
+  letter-spacing: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  /* display: inline-block; */
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
   background-color: #ff4444;
 }
 
 .ball_blue {
+  letter-spacing: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
   background-color: #3399ff;
 }
 
 .ball_green {
+  letter-spacing: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
   background-color: #33cc33;
 }
 
