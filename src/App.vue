@@ -46,15 +46,19 @@ export default {
     home1: defineAsyncComponent(() => import('./views/style1/home/home.vue')),
     home2: defineAsyncComponent(() => import('./views/style2/home/home.vue')),
     home3: defineAsyncComponent(() => import('./views/style3/home/home.vue')),
+    home4: defineAsyncComponent(() => import('./views/style4/home/home.vue')),
     login1: defineAsyncComponent(() => import('./views/style1/login/login.vue')),
     login2: defineAsyncComponent(() => import('./views/style2/login/login.vue')),
     login3: defineAsyncComponent(() => import('./views/style3/login/login.vue')),
+    login4: defineAsyncComponent(() => import('./views/style4/login/login.vue')),
     modifypasswor1: defineAsyncComponent(() => import('./views/style1/login/modifypasswor.vue')),
     modifypasswor2: defineAsyncComponent(() => import('./views/style2/login/modifypasswor.vue')),
     modifypasswor3: defineAsyncComponent(() => import('./views/style3/login/modifypasswor.vue')),
+    modifypasswor4: defineAsyncComponent(() => import('./views/style4/login/modifypasswor.vue')),
     welcome1: defineAsyncComponent(() => import('./views/style1/login/welcome.vue')),
     welcome2: defineAsyncComponent(() => import('./views/style2/login/welcome.vue')),
     welcome3: defineAsyncComponent(() => import('./views/style3/login/welcome.vue')),
+    welcome4: defineAsyncComponent(() => import('./views/style4/login/welcome.vue')),
   },
   mounted() {
     const params = new URLSearchParams(window.location.search);
@@ -153,9 +157,5 @@ export default {
   align-items: center;
   font-size: 20px;
   cursor: pointer;
-}
-
-body {
-  position: relative !important;
 }
 </style>
