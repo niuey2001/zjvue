@@ -1,19 +1,41 @@
 <template>
-  <el-form ref="adduser" :model="adduser" :rules="rules" label-width="80px" class="custom-form-style"
+  <el-form ref="adduser" :model="adduser" :rules="rules" label-width="0px" class="custom-form-style"
     v-loading="loadingadd">
-    <el-form-item label="账号" prop="account">
-      <el-input style="width:220px;" v-model="adduser.account" placeholder="请输入账号"></el-input>
-    </el-form-item>
-    <el-form-item label="姓名" prop="name">
-      <el-input style="width:220px;" v-model="adduser.name" placeholder="请输入姓名"></el-input>
-    </el-form-item>
-    <el-form-item label="密码" prop="password">
-      <el-input style="width:220px;" type="password" v-model="adduser.password" placeholder="请输入密码"></el-input>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="onSubmit('adduser', adduser)">确认添加</el-button>
-      <el-button @click="resetForm('adduser')">重置</el-button>
-    </el-form-item>
+    <table border="1" class="el-form-table">
+      <tbody>
+        <tr>
+          <td class="el-form-table-label">账号</td>
+          <td>
+            <el-form-item label="" prop="account">
+              <el-input style="width:150px;" v-model="adduser.account" placeholder="请输入账号"></el-input>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">姓名</td>
+          <td>
+            <el-form-item label="" prop="name">
+              <el-input style="width:150px;" v-model="adduser.name" placeholder="请输入姓名"></el-input>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">密码</td>
+          <td>
+            <el-form-item label="" prop="password">
+              <el-input style="width:150px;" type="password" v-model="adduser.password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label"></td>
+          <td class="el-form-table-footer">
+            <span class="game_box_topbtn" @click="onSubmit('adduser', adduser)">确认添加</span>
+            <span class="game_box_topbtn" @click="resetForm('adduser')">重置</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </el-form>
 </template>
 

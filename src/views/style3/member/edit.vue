@@ -1,144 +1,186 @@
 <template>
-  <el-form v-if="editdata != ''" ref="edit" :model="editdata" :rules="rules" label-width="150px"
-    class="custom-form-style" v-loading="loadingadd">
-    <el-row :gutter="20">
-      <el-col :span="12">
-        <el-form-item :label="componentsPoPdata.ctype == 1 ? '代理账号' : '会员账号'">
-          {{ editdata.account }}
-        </el-form-item>
-      </el-col>
-      <el-col :span="12">
-        <el-form-item :label="componentsPoPdata.ctype == 1 ? '代理姓名' : '会员姓名'" prop="name">
-          <el-input v-model="editdata.name" placeholder="请输入姓名"></el-input>
-        </el-form-item>
-      </el-col>
-    </el-row>
+  <el-form v-if="editdata != ''" ref="edit" :model="editdata" :rules="rules" label-width="0px" class="custom-form-style"
+    v-loading="loadingadd">
+    <table border="1" class="el-form-table">
+      <tbody>
+        <tr>
+          <td class="el-form-table-label">{{ componentsPoPdata.ctype == 1 ? '代理' : '会员' }}账号</td>
+          <td class="el-form-table-tr">
+            <el-form-item label="">
+              {{ editdata.account }}
+            </el-form-item>
+          </td>
+          <td class="el-form-table-label">{{ componentsPoPdata.ctype == 1 ? '代理' : '会员' }}姓名</td>
+          <td class="el-form-table-tr">
+            <el-form-item label="" prop="name">
+              <el-input v-model="editdata.name" placeholder="请输入姓名"></el-input>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">登录密码</td>
+          <td class="el-form-table-tr" colspan="3">
+            <el-form-item label="" prop="password">
+              <el-input type="password" v-model="editdata.password" placeholder="请输入密码"></el-input>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">信用额度</td>
+          <td class="el-form-table-tr" colspan="3">
+            <el-form-item label="">
+              <el-input v-model="editdata.ts" placeholder="请输入额度"></el-input>&nbsp;&nbsp;<span>剩余可分配额度:</span>
+              <span style="color:red">{{ (parseInt(edittopmember.cs) - (parseInt(editdata.ts) - parseInt(oldts))) >= 0 ?
+                (parseInt(edittopmember.cs) - (parseInt(editdata.ts) - parseInt(oldts))) : editdata.ts ?
+                  editdata.ts = parseInt(oldts) + parseInt(edittopmember.cs) : parseInt(oldts)+parseInt(edittopmember.cs)}}</span>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr v-if="componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1">
+          <td class="el-form-table-label" style="line-height: 22px;">{{ MemberType[editdata.type] }}<br />最高成数</td>
+          <td colspan="3" class="el-form-table-tr">
+            <el-form-item label="">
+              <el-input v-model="editdata.zc" placeholder="请输入百分比"></el-input>&nbsp;%&nbsp;
+              (最大<!-- {{percentage()}}% -->{{ edittopmember.zc }}%)
+              <span style="color:red;margin-left:10px;">指下级最大成数的占成最高上限</span>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr v-if="componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1">
+          <td class="el-form-table-label" style="line-height: 22px;">
+            {{ MemberType[editdata.type] }}<br />
+            最低占成</td>
+          <td class="el-form-table-tr" colspan="3">
+            <el-form-item label="">
+              <el-input v-model="editdata.top_zc" placeholder="请输入值"></el-input>&nbsp;%&nbsp;
+              <!-- <span>剩余可分配比例:</span><span style="color:red">
+                  {{percentage()}}%</span>  -->
+              (最大{{ edittopmember.zc }}%)
+              <span style="color:red;margin-left:10px;">指下级固定最少占成成数</span>
+            </el-form-item>
+          </td>
 
-    <el-form-item label="登录密码" prop="password">
-      <el-input type="password" v-model="editdata.password" placeholder="请输入密码"></el-input>
-    </el-form-item>
+        </tr>
+        <!-- <tr v-if="edittopmember.is_lj && editdata.type>2 && componentsPoPdata.nowdata.type==1 && componentsPoPdata.ctype==1">
+            <td class="el-form-table-label">{{MemberType[edittopmember.type]}}最高占成</td>
+            <td class="el-form-table-tr" colspan="3">        
+              <el-form-item label="">
+                <el-input v-model="editdata.top_lj_zc" placeholder="请输入百分比"></el-input>&nbsp;%
+              </el-form-item> 
+            </td>                 
+                                                              
+          </tr> -->
+        <tr>
+          <td class="el-form-table-label" style="line-height: 22px;">{{ MemberType[edittopmember.type] }}(本级)<br />最高占成
+          </td>
+          <td class="el-form-table-tr" colspan="3">
+            <el-form-item label="">
+              <el-input v-model="editdata.top_lj_zc" placeholder="请输入百分比"></el-input>&nbsp;%&nbsp;
+              ({{ edittopmember.type == 1 ? 0 : edittopmember.top_zc }}%-{{ edittopmember.zc }}%)
+              <span style="color:red;margin-left:10px;">指本级占成成数</span>
+            </el-form-item>
+          </td>
 
-    <el-form-item label="信用额度">
-      <el-input v-model="editdata.ts" placeholder="请输入额度"></el-input>
-      <span style="margin-left: 10px;">剩余可分配额度:</span>
-      <span style="color:red">{{ (parseInt(edittopmember.cs) - (parseInt(editdata.ts) - parseInt(oldts))) >= 0 ?
-        (parseInt(edittopmember.cs) - (parseInt(editdata.ts) - parseInt(oldts))) : editdata.ts ?
-          editdata.ts = parseInt(oldts) + parseInt(edittopmember.cs) : parseInt(oldts) +
-          parseInt(edittopmember.cs) }}</span>
-    </el-form-item>
-
-    <el-form-item v-if="componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1"
-      :label="MemberType[editdata.type] + '最高成数'">
-      <el-input v-model="editdata.zc" placeholder="请输入百分比" style="width: 120px;"></el-input>
-      <span style="margin: 0 10px;">% (最大{{ edittopmember.zc }}%)</span>
-      <span style="color:red;">指下级最大成数的占成最高上限</span>
-    </el-form-item>
-
-    <el-form-item v-if="componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1"
-      :label="MemberType[editdata.type] + '最低占成'">
-      <el-input v-model="editdata.top_zc" placeholder="请输入值" style="width: 120px;"></el-input>
-      <span style="margin: 0 10px;">% (最大{{ edittopmember.zc }}%)</span>
-      <span style="color:red;">指下级固定最少占成成数</span>
-    </el-form-item>
-
-    <el-form-item :label="MemberType[edittopmember.type] + '(本级)最高占成'">
-      <el-input v-model="editdata.top_lj_zc" placeholder="请输入百分比" style="width: 120px;"></el-input>
-      <span style="margin: 0 10px;">% ({{ edittopmember.type == 1 ? 0 : edittopmember.top_zc }}%-{{ edittopmember.zc
-      }}%)</span>
-      <span style="color:red;">指本级占成成数</span>
-    </el-form-item>
-
-    <el-form-item label="开放游戏">
-      <div style="margin-bottom: 50px;">
-        <el-checkbox :indeterminate="isIndeterminateGame" v-model="checkAllGame"
-          @change="handleCheckAllChangeGame">全选</el-checkbox>
-      </div>
-      <el-checkbox-group v-model="editGame" @change="handleCheckedCitiesChangeGame" style="margin-top: 10px;">
-        <el-checkbox v-for="items in topGame" :label="items" :key="items" :value="items">
-          {{ getGameName(parseInt(items))[0].name }}
-        </el-checkbox>
-      </el-checkbox-group>
-    </el-form-item>
-
-    <el-form-item label="开放盘口">
-      <div>
-        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-      </div>
-      <el-checkbox-group v-model="chackpan" @change="handleCheckedCitiesChange" style="margin-top: 10px;">
-        <el-checkbox v-for="items in getpan(edittopmember)" :label="items" :key="items" :value="items">
-          {{ items }}盘
-        </el-checkbox>
-      </el-checkbox-group>
-    </el-form-item>
-
-    <el-form-item label="账号权限">
-      <div class="account-permissions">
-        <div class="permission-item">
-          <span>启停状态</span>
-          <el-select v-bind:disabled="!edittopmember.state" v-model="editdata.state" style="width: 100px;">
-            <el-option :value="true" label="启用"></el-option>
-            <el-option :value="false" label="停用"></el-option>
-          </el-select>
-        </div>
-
-        <div class="permission-item">
-          <span>冻结状态</span>
-          <el-select v-bind:disabled="!edittopmember.is_bet" v-model="editdata.is_bet" style="width: 100px;">
-            <el-option :value="true" label="正常"></el-option>
-            <el-option :value="false" label="冻结"></el-option>
-          </el-select>
-        </div>
-
-        <div class="permission-item"
-          v-if="edittopmember.is_buhuo && componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1">
-          <span>补货</span>
-          <el-select v-bind:disabled="!edittopmember.is_buhuo" v-model="editdata.is_buhuo" style="width: 100px;">
-            <el-option :value="true" label="允许"></el-option>
-            <el-option :value="false" label="禁止"></el-option>
-          </el-select>
-        </div>
-
-        <div class="permission-item"
-          v-if="edittopmember.is_kongpan && componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1">
-          <span>控盘操作</span>
-          <el-select v-bind:disabled="!edittopmember.is_kongpan" v-model="editdata.is_kongpan" style="width: 100px;">
-            <el-option :value="true" label="允许"></el-option>
-            <el-option :value="false" label="禁止"></el-option>
-          </el-select>
-        </div>
-      </div>
-    </el-form-item>
-
-    <el-form-item label="版本样式" v-if="edittopmember.type == 1">
-      <el-select v-model="editdata.color" style="width: 200px;">
-        <el-option v-for="item in Versions" :key="parseInt(item.type)" :label="item.web_name"
-          :value="parseInt(item.type)"></el-option>
-      </el-select>
-    </el-form-item>
-
-    <el-form-item>
-      <el-button type="primary" @click="onSubmit('edit', editdata)">确认修改</el-button>
-    </el-form-item>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">开放游戏</td>
+          <td colspan="3" class="el-form-table-tr">
+            <el-checkbox :indeterminate="isIndeterminateGame" v-model="checkAllGame"
+              @change="handleCheckAllChangeGame">全选</el-checkbox>
+            <el-checkbox-group v-model="editGame" @change="handleCheckedCitiesChangeGame">
+              <el-checkbox v-for="items in topGame" :label="items" :key="items"
+                :value="items">{{ getGameName(parseInt(items))[0].name }}</el-checkbox>
+            </el-checkbox-group>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">开放盘口</td>
+          <td colspan="3" class="el-form-table-tr">
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll"
+              @change="handleCheckAllChange">全选</el-checkbox>
+            <el-checkbox-group v-model="chackpan" @change="handleCheckedCitiesChange">
+              <el-checkbox v-for="items in getpan(edittopmember)" :label="items" :key="items"
+                :value="items">{{ items }}盘</el-checkbox>
+            </el-checkbox-group>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">账号权限</td>
+          <td colspan="3" class="el-form-table-tr">
+            <el-form-item label="">
+              <span>启停状态</span>
+              <select v-bind:disabled="!edittopmember.state" v-model="editdata.state">
+                <option :value="true">启用</option>
+                <option :value="false">停用</option>
+              </select>
+              <span>冻结状态</span>
+              <select v-bind:disabled="!edittopmember.is_bet" v-model="editdata.is_bet">
+                <option :value="true">正常</option>
+                <option :value="false">冻结</option>
+              </select>
+              <span
+                v-if="edittopmember.is_buhuo && componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1">补货</span>
+              <select v-bind:disabled="!edittopmember.is_buhuo"
+                v-if="edittopmember.is_buhuo && componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1"
+                v-model="editdata.is_buhuo">
+                <option :value="true">允许</option>
+                <option :value="false">禁止</option>
+              </select>
+              <span
+                v-if="edittopmember.is_kongpan && componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1">控盘操作</span>
+              <select v-bind:disabled="!edittopmember.is_kongpan"
+                v-if="edittopmember.is_kongpan && componentsPoPdata.nowdata.type == 1 && componentsPoPdata.ctype == 1"
+                v-model="editdata.is_kongpan">
+                <option :value="true">允许</option>
+                <option :value="false">禁止</option>
+              </select>
+              <!-- <span v-if="edittopmember.is_lj && componentsPoPdata.nowdata.type==1 && componentsPoPdata.ctype==1">拦截占成</span>
+                  <select v-bind:disabled="!edittopmember.is_lj" v-if="edittopmember.is_lj && componentsPoPdata.nowdata.type==1 && componentsPoPdata.ctype==1" v-model="editdata.is_lj">
+                    <option :value="true">允许</option>
+                    <option :value="false">禁止</option>
+                  </select>                                                                                             -->
+            </el-form-item>
+          </td>
+        </tr>
+        <!-- <tr v-if="edittopmember.type==1 && componentsPoPdata.nowdata.type==1 && componentsPoPdata.ctype==1">
+            <td class="el-form-table-label">查看{{MemberType[edittopmember.type]}}报表</td>
+            <td class="el-form-table-tr" colspan="3">        
+              <el-form-item label=""> 
+                <span>查看{{MemberType[edittopmember.type]}}总报</span>
+                <select v-model="editdata.is_report">
+                  <option :value="true">允许</option>
+                  <option :value="false">禁止</option>
+                </select>   
+                <span>查看{{MemberType[edittopmember.type]}}报表明细</span>
+                <select v-model="editdata.is_report_detail">
+                  <option :value="true">允许</option>
+                  <option :value="false">禁止</option>
+                </select>                   
+              </el-form-item>   
+            </td>      
+          </tr>    -->
+        <tr v-if="edittopmember.type == 1">
+          <td class="el-form-table-label">版本样式</td>
+          <td class="el-form-table-tr" colspan="3">
+            <el-form-item label="">
+              <select v-model="editdata.color" style="width:100px">
+                <option v-for="item in Versions" :value="parseInt(item.type)">&nbsp;&nbsp;{{ item.web_name
+                  }}&nbsp;&nbsp;</option>
+              </select>
+            </el-form-item>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label"></td>
+          <td colspan="3" class="el-form-table-footer">
+            <span class="game_box_topbtn" @click="onSubmit('edit', editdata)">确认修改</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </el-form>
 </template>
 
-<style scoped>
-.account-permissions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.permission-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.custom-form-style .el-form-item {
-  margin-bottom: 22px;
-}
-</style>
 
 <script>
 export default {

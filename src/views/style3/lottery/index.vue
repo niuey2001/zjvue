@@ -1,95 +1,86 @@
 <template>
-  <div class="lottery-settings-container">
-    <el-card v-if="editGame != ''" class="lottery-settings-card" shadow="hover">
-      <template #header>
-        <div class="card-header">
-          <h3>彩种设置</h3>
-        </div>
-      </template>
-      <el-form :model="editGame" label-width="150px" size="default" label-position="left">
-        <div class="form-section">
-          <h4 class="section-title">基本信息</h4>
-          <el-row :gutter="20">
-            <el-col :span="24">
-              <el-form-item label="彩种：">
-                <el-select v-model="lottery_id" @change="getGameIndex" placeholder="请选择" class="full-width">
-                  <el-option v-for="item in GameList" :key="item.lottery_id" :label="item.name"
-                    :value="parseFloat(item.lottery_id)" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="彩种开关：">
-                <el-switch v-model="editGame.self_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="是否自动收单：">
-                <el-switch v-model="editGame.auto_open" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-
-        <div class="form-section">
-          <h4 class="section-title">期号信息</h4>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="当前期号：">
-                <el-input v-model="editGame.issue" disabled></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="本期日期：">
-                <el-input v-model="editGame.date" disabled></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-
-        <div class="form-section">
-          <h4 class="section-title">时间设置</h4>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="开奖时间：">
-                <el-input v-model="editGame.kj_time" disabled></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="开盘时间：">
-                <el-time-picker v-model="timedata.open_time"
-                  :picker-options="{ selectableRange: '00:00:00 - 23:59:59' }" :clearable="false" placeholder="请选择开盘时间"
-                  class="full-width" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12">
-              <el-form-item label="特码封盘时间：">
-                <el-time-picker v-model="timedata.end_time" :picker-options="{ selectableRange: '00:00:00 - 23:59:59' }"
-                  :clearable="false" placeholder="请选择特码封盘时间" class="full-width" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="非特码封盘时间：">
-                <el-time-picker v-model="timedata.end_time_f"
-                  :picker-options="{ selectableRange: '00:00:00 - 23:59:59' }" :clearable="false"
-                  placeholder="请选择非特码封盘时间" class="full-width" />
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="form-actions">
-          <el-button type="primary" @click="onSubmit" icon="Check">保存设置</el-button>
-          <el-button @click="resetForm" icon="Refresh">重置</el-button>
-        </div>
-      </el-form>
-    </el-card>
-    <div v-else class="empty-state">
-      <el-empty description="暂无彩种数据"></el-empty>
+  <div class="main-boxdiv" style="width: 800px;">
+    <div class="titlem bodynav">
+      开盘设置 &nbsp;
     </div>
+    <table border="1" class="el-form-table" v-if="editGame != ''">
+      <tbody>
+        <tr>
+          <td class="el-form-table-label">彩种</td>
+          <td class="el-form-table-tr">
+            <select v-model="lottery_id" @change="getGameIndex()" style="height: 26px;" laceholder="请选择">
+              <option v-for="item in GameList" :key="item.lottery_id" :label="item.name"
+                :value="parseFloat(item.lottery_id)">
+              </option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">彩种开关</td>
+          <td class="el-form-table-tr">
+            <el-switch v-model="editGame.self_state"></el-switch>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">当前期号</td>
+          <td class="el-form-table-tr">
+            {{ editGame.issue }}
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">本期日期</td>
+          <td class="el-form-table-tr">
+            {{ editGame.date }}
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">开奖时间</td>
+          <td class="el-form-table-tr">
+            {{ editGame.kj_time }}
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">开盘时间</td>
+          <td class="el-form-table-tr">
+            <el-time-picker v-model="timedata.open_time" :picker-options="{
+              selectableRange: '00:00:00 - 23:59:59'
+            }" :clearable="false" placeholder="请选择开盘时间">
+            </el-time-picker>
+
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">特码封盘时间</td>
+          <td class="el-form-table-tr">
+            <el-time-picker v-model="timedata.end_time" :picker-options="{
+              selectableRange: '00:00:00 - 23:59:59'
+            }" :clearable="false" placeholder="请选择特码封盘时间">
+            </el-time-picker>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">非特码封盘时间</td>
+          <td class="el-form-table-tr">
+            <el-time-picker v-model="timedata.end_time_f" :picker-options="{
+              selectableRange: '00:00:00 - 23:59:59'
+            }" :clearable="false" placeholder="请选择非特码封盘时间">
+            </el-time-picker>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label">是否自动收单</td>
+          <td class="el-form-table-tr">
+            <el-switch v-model="editGame.auto_open"></el-switch>
+          </td>
+        </tr>
+        <tr>
+          <td class="el-form-table-label"></td>
+          <td class="el-form-table-tr el-form-table-footer">
+            <span class="game_box_topbtn" @click="onSubmit()">保存设置</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -105,8 +96,7 @@ export default {
       timedata: { 'open_time': '', 'end_time': '', 'end_time_f': '' },
       GameList: [],
       editGame: '',
-      lottery_id: '',
-      formOriginal: null
+      lottery_id: ''
     }
   },
   created() {
@@ -126,24 +116,12 @@ export default {
             message: response.msg,
             type: 'success'
           });
-          // 保存成功后更新原始表单数据
-          this.formOriginal = JSON.parse(JSON.stringify(this.editGame));
         } else {
           this.$message.error(response.msg);
         }
       }).catch(error => {
         this.$message.error('网络请求错误');
       });
-    },
-    resetForm() {
-      // 如果有原始数据，重置为原始数据
-      if (this.formOriginal) {
-        this.editGame = JSON.parse(JSON.stringify(this.formOriginal));
-        this.getGameIndex();
-      } else {
-        // 否则重新获取数据
-        this.getOpen();
-      }
     },
     getTimeComponents(time) {
       const now = time;
@@ -164,8 +142,6 @@ export default {
           lotterydata.sort((a, b) => a.sort - b.sort)
           this.GameList = lotterydata
           this.getGameIndex()
-          // 保存原始表单数据用于重置
-          this.formOriginal = JSON.parse(JSON.stringify(this.editGame));
         } else {
           this.$message.error(response.msg);
         }
@@ -188,88 +164,6 @@ export default {
       this.timedata.end_time_f = new Date(dates[0], dates[1], dates[2], end_time_f[0], end_time_f[1], end_time_f[2])
     }
   }
+
 }
 </script>
-
-<style scoped>
-.lottery-settings-container {
-  padding: 20px;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.lottery-settings-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-header h3 {
-  margin: 0;
-  color: #333;
-  font-size: 18px;
-}
-
-.form-section {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.section-title {
-  font-size: 16px;
-  color: #606266;
-  margin: 0 0 16px 0;
-  padding-left: 8px;
-  border-left: 3px solid #409EFF;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-}
-
-.form-actions .el-button {
-  min-width: 120px;
-  margin: 0 12px;
-}
-
-.form-actions .el-button .el-icon {
-  margin-right: 4px;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.empty-state {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-}
-
-@media screen and (max-width: 768px) {
-  .lottery-settings-container {
-    padding: 10px;
-  }
-
-  .el-form-item {
-    margin-bottom: 18px;
-  }
-
-  .form-actions {
-    flex-direction: column;
-  }
-
-  .form-actions .el-button {
-    margin: 5px 0;
-  }
-}
-</style>

@@ -8,7 +8,7 @@
           </select> 
           </span>            
       </div> 
-      <el-table border :data="histroy" :header-cell-class-name="'trheader'" :header-cell-style="headerCellStylereptot" :height="clientHeight2+'px'" :cell-style="cellStyle" style="width: 100%">
+      <el-table border :data="histroy" :header-cell-class-name="'trheader'" :header-cell-style="headerCellStylereptot" :height="clientHeight2-80+'px'" :cell-style="cellStyle" style="width: 100%">
           <el-table-column prop="Issue" label="期数"/>
           <el-table-column prop="Date" label="开奖时间" width="170"/>
           <el-table-column v-for="item in 7" :label="item==7 ? '特码':'正'+item">
@@ -176,6 +176,57 @@
   }
   </script>
   <style scoped>
+  .ball_n {
+  font-size: 14px;
+  color: #111626;
+  text-align: center;
+  width: 16px;
+  margin: 0 2px;
+  font-weight: 400;
+}
+
+.ball_red {
+  letter-spacing: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  /* display: inline-block; */
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  background-color: #ff4444;
+}
+
+
+.ball_blue {
+  letter-spacing: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  background-color: #3399ff;
+}
+
+.ball_green {
+  letter-spacing: 0;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  display: inline-block;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  background-color: #33cc33;
+}
   .tableheader{
       justify-content: center !important;
   }

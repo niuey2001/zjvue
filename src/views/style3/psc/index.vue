@@ -2526,6 +2526,7 @@ export default {
 .game_info_r_qishu {
   margin-right: 10px;
   font-weight: bold;
+  color: #000;
 }
 
 .game_info_r_result {
@@ -2615,7 +2616,7 @@ export default {
   background-color: #d7def2;
   color: #333333 !important;
   border: none !important;
-  height: 32px !important;
+  height: 25px !important;
   line-height: 1 !important;
   font-size: 13px !important;
 }

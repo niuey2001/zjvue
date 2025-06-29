@@ -69,7 +69,7 @@ export default {
     this.UserInfo = this.$store.state.UserInfo
     this.Authority = this.$store.state.Authority
     this.backgroundColor = this.$store.state.backgroundColor;
-
+ 
     var a = []
     for (let key in this.menuData) {
 
@@ -184,7 +184,7 @@ export default {
       const maintopDiv1 = this.$refs.topheii
       const aaaaa = this.getBoxHeight(maintopDiv1)
       this.clientHeight = this.clientHeight - aaaaa
-      this.clientHeight2 = this.clientHeight - 115
+      this.clientHeight2 = this.clientHeight - 225
       this.clientHeight1 = this.clientHeight - 173
     },
 

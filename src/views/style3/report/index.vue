@@ -54,7 +54,7 @@
           </div>
         </div>
         <div class="search-item" style="margin-left: 15px;">
-          <el-button type="primary" size="small" style="background-color: #409EFF;" @click="search">查询</el-button>
+          <el-button type="primary" size="small"   @click="search">查询</el-button>
         </div>
       </div>
     </div>

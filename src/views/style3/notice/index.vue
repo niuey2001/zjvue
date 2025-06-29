@@ -1,25 +1,39 @@
 <template>
   <div class="main-boxdiv">
     <div class="mb-4">
-      <el-button type="primary" @click="dialogFormVisible = true">添加公告</el-button>
-
+      <span class="game_box_topbtn" @click="dialogFormVisible = true">添加公告</span>
     </div>
     <el-dialog v-model="dialogFormVisible" title="" width="800">
       <div class="titlem bodynav dialog-padding">
         添加公告
       </div>
-      <el-form :model="updata" label-width="80px" class="custom-form-style">
-        <el-form-item label="内容">
-          <el-input type="textarea" v-model="updata.message" placeholder="请输入内容"></el-input>
-        </el-form-item>
-
-        <el-form-item label="排序">
-          <el-input v-model="updata.sort"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="updatapost()">确认添加</el-button>
-        </el-form-item>
+      <el-form label-width="0px" class="custom-form-style">
+        <table border="1" class="el-form-table">
+          <tbody>
+            <tr>
+              <td class="el-form-table-label">内容</td>
+              <td>
+                <el-form-item label="">
+                  <el-input type="textarea" v-model="updata.message" placeholder="请输入内容"></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">排序</td>
+              <td>
+                <el-form-item label="">
+                  <el-input v-model="updata.sort" />
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label"></td>
+              <td class="el-form-table-footer">
+                <span class="game_box_topbtn" @click="updatapost()">确认添加</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </el-form>
     </el-dialog>
 

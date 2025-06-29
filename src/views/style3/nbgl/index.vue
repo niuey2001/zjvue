@@ -219,8 +219,8 @@ export default {
       this.clientHeight = document.body.clientHeight
       const maintopDiv1 = this.$refs.topheii
       const aaaaa = this.getBoxHeight(maintopDiv1)
-      this.clientHeight = this.clientHeight - aaaaa
-      this.clientHeight2 = this.clientHeight - 115
+      this.clientHeight = this.clientHeight - 110
+      this.clientHeight2 = this.clientHeight - 130
       this.clientHeight1 = this.clientHeight - 173
     },
 

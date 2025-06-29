@@ -1,82 +1,181 @@
 <template>
   <div class="main-boxdiv">
     <div class="mb-4">
-      <el-button type="primary" @click="adduseropen">添加子账号</el-button>
+      <span class="game_box_topbtn" @click="adduseropen">添加子账号</span>
     </div>
     <el-dialog v-model="dialogFormVisible" title="" width="800">
       <div class="titlem bodynav dialog-padding">
         添加子账号
       </div>
-      <el-form ref="adduser" :model="adduser" :rules="rules" label-width="100px" class="custom-form-style"
+      <el-form ref="adduser" :model="adduser" :rules="rules" label-width="0px" class="custom-form-style"
         v-loading="loadingadd">
-        <el-form-item label="账号" prop="account">
-          <el-input v-model="adduser.account" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-        <el-form-item label="名称">
-          <el-input v-model="adduser.name" placeholder="请输入名称"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="adduser.password" placeholder="请输入密码"></el-input>
-        </el-form-item>
-        <el-form-item label="操作密码" prop="operationpass">
-          <el-input type="password" v-model="adduser.operationpass" placeholder="请输入密码" />
-        </el-form-item>
-        <el-form-item label="权限" required>
-          <el-checkbox style="width: 100%;height: 20px;" :indeterminate="isIndeterminate" v-model="checkAll"
-            @change="handleCheckAllChange">全选</el-checkbox>
-          <el-checkbox-group v-model="authority" @change="handleCheckedCitiesChange" class="authority-checkbox-group">
-            <el-checkbox v-for="items in authoritydata" :label="items.value" :key="items.name" :value="items.value">{{
-              items.name }}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="IP白名单">
-          <el-input type="textarea" v-model="adduser.ip" placeholder="多个用逗号分隔"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit('adduser', adduser)">确认添加</el-button>
-          <el-button @click="resetForm('adduser')">重置</el-button>
-        </el-form-item>
+        <table border="1" class="el-form-table">
+          <tbody>
+            <tr>
+              <td class="el-form-table-label">账号</td>
+              <td>
+                <el-form-item label="" prop="account">
+                  <el-input v-model="adduser.account" placeholder="请输入用户名"></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">名称</td>
+              <td>
+                <el-form-item label="">
+                  <el-input v-model="adduser.name" placeholder="请输入名称"></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">密码</td>
+              <td>
+                <el-form-item label="" prop="password">
+                  <el-input type="password" v-model="adduser.password" placeholder="请输入密码"></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">操作密码</td>
+              <td>
+                <el-form-item label="" prop="operationpass">
+                  <el-input type="password" v-model="adduser.operationpass" placeholder="请输入密码" />
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">权限</td>
+              <td class="el-form-table-tr">
+                <el-form-item label="" required>
+                  <el-checkbox style="width: 100%;height: 20px;" :indeterminate="isIndeterminate" v-model="checkAll"
+                    @change="handleCheckAllChange">全选</el-checkbox>
+                  <el-checkbox-group v-model="authority" @change="handleCheckedCitiesChange">
+                    <el-checkbox v-for="items in authoritydata" :label="items.value" :key="items.name"
+                      :value="items.value">{{ items.name }}</el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+              </td>
+            </tr>
+            <!-- <tr>
+          <td class="el-form-table-label">样式选择</td>
+          <td>        
+            <el-form-item label="">
+              <select v-model="adduser.color" laceholder="请选择样式">
+                <option v-for="item in 6" :key="item" :label="'样式'+item" :value="parseFloat(item)">1</option>
+              </select>
+            </el-form-item>  
+        </td>
+        </tr>   -->
+            <tr>
+              <td class="el-form-table-label">IP白名单</td>
+              <td>
+                <el-form-item label="">
+                  <el-input type="textarea" v-model="adduser.ip" placeholder="多个用逗号分隔"></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label"></td>
+              <td class="el-form-table-footer">
+                <span class="game_box_topbtn" @click="onSubmit('adduser', adduser)">确认添加</span>
+                <span class="game_box_topbtn" @click="resetForm('adduser')">重置</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </el-form>
     </el-dialog>
     <el-dialog v-model="dialogFormVisible2" title="" width="800">
       <div class="titlem bodynav dialog-padding">
         编辑子账号
       </div>
-      <el-form ref="edit" :model="editdata" :rules="editrules" label-width="100px" class="custom-form-style"
+      <el-form ref="edit" :model="editdata" :rules="editrules" label-width="0px" class="custom-form-style"
         v-loading="loadingadd">
-        <el-form-item label="账号">
-          {{ editdata.account }}
-        </el-form-item>
-        <el-form-item label="名称">
-          <el-input v-model="editdata.name" />
-        </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input type="password" v-model="editdata.password" />
-        </el-form-item>
-        <el-form-item label="操作密码" prop="operationpass">
-          <el-input type="password" v-model="editdata.operationpass" />
-        </el-form-item>
-        <el-form-item label="权限" required>
-          <el-checkbox style="width: 100%;height: 20px;" :indeterminate="isIndeterminate" v-model="checkAll"
-            @change="handleCheckAllChange">全选</el-checkbox>
-          <el-checkbox-group v-model="authority" @change="handleCheckedCitiesChange" class="authority-checkbox-group">
-            <el-checkbox v-for="items in authoritydata" :label="items.value" :value="items.value" :key="items.name">{{
-              items.name }}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-        <el-form-item label="状态" required>
-          <el-radio-group v-model="editdata.state">
-            <el-radio :label="true">启用</el-radio>
-            <el-radio :label="false">停用</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="IP白名单">
-          <el-input type="textarea" v-model="editdata.ip" placeholder="多个用逗号分隔"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit('edit', editdata)">确认修改</el-button>
-          <el-button @click="resetForm('edit')">重置</el-button>
-        </el-form-item>
+        <table border="1" class="el-form-table">
+          <tbody>
+            <tr>
+              <td class="el-form-table-label">账号</td>
+              <td>
+                <el-form-item label="">
+                  {{ editdata.account }}
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">名称</td>
+              <td>
+                <el-form-item label="">
+                  <el-input v-model="editdata.name" />
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">密码</td>
+              <td>
+                <el-form-item label="" prop="password">
+                  <el-input type="password" v-model="editdata.password" />
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">操作密码</td>
+              <td>
+                <el-form-item label="" prop="operationpass">
+                  <el-input type="password" v-model="editdata.operationpass" />
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">权限</td>
+              <td class="el-form-table-tr">
+                <el-form-item label="" required>
+                  <el-checkbox style="width: 100%;height: 20px;" :indeterminate="isIndeterminate" v-model="checkAll"
+                    @change="handleCheckAllChange">全选</el-checkbox>
+                  <el-checkbox-group v-model="authority" @change="handleCheckedCitiesChange">
+                    <el-checkbox v-for="items in authoritydata" :label="items.value" :value="items.value"
+                      :key="items.name">{{ items.name }}</el-checkbox>
+                  </el-checkbox-group>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label">状态</td>
+              <td>
+                <el-form-item label="" required>
+                  <el-radio-group v-model="editdata.state">
+                    <el-radio :label="true">启用</el-radio>
+                    <el-radio :label="false">停用</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+              </td>
+            </tr>
+            <!-- <tr>
+          <td class="el-form-table-label">样式选择</td>
+          <td>        
+            <el-form-item label="">
+              <select v-model="editdata.color" laceholder="请选择样式">
+                <option v-for="item in 6" :key="item" :label="'样式'+item" :value="parseFloat(item)">1</option>
+              </select>
+            </el-form-item>  
+        </td>
+        </tr>   -->
+            <tr>
+              <td class="el-form-table-label">IP白名单</td>
+              <td>
+                <el-form-item label="">
+                  <el-input type="textarea" v-model="editdata.ip" placeholder="多个用逗号分隔"></el-input>
+                </el-form-item>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label"></td>
+              <td class="el-form-table-footer">
+                <span class="game_box_topbtn" @click="onSubmit('edit', editdata)">确认修改</span>
+                <span class="game_box_topbtn" @click="resetForm('edit')">重置</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </el-form>
     </el-dialog>
     <el-dialog v-model="dialogFormVisible3" title="" class="dssetCom-dialog">
@@ -125,14 +224,12 @@
           {{ getAname(row.authority) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="350">
+      <el-table-column label="操作" width="280">
         <template #default="{ row }">
-          <el-button size="small" type="primary" @click="edit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="del(row)">删除</el-button>
-          <el-button size="small" type="info"
-            @click="logdata.id = row.id, logdata.account = row.account, logdata.index = 1, logdata.page = 1, logs()">记录</el-button>
-          <el-button size="small" type="warning"
-            @click="logdata.id = row.id, logdata.account = row.account, logdata.index = 2, logdata.page = 1, logs()">日志</el-button>
+          <span @click="edit(row)">编辑</span> |
+          <span @click="del(row)">删除</span> |
+          <span @click="logdata.id = row.id, logdata.account = row.account, logdata.index = 1, logdata.page = 1, logs()">记录</span> |
+          <span @click="logdata.id = row.id, logdata.account = row.account, logdata.index = 2, logdata.page = 1, logs()">日志</span>
         </template>
       </el-table-column>
     </el-table>
@@ -444,35 +541,11 @@ export default {
 
 .el-checkbox-group {
   width: 100%;
-  display: contents;
-}
-
-.authority-checkbox-group {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.checkbox-container {
   background-color: #f5f5f5;
-  padding: 10px;
-  border-radius: 4px;
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
+  display: contents;
 }
 
 .el-checkbox {
   margin-right: 10px !important;
-  margin-bottom: 5px;
-  width: calc(33.33% - 10px);
-}
-
-.custom-form-style {
-  padding: 20px;
-}
-
-.custom-form-style .el-form-item {
-  margin-bottom: 20px;
 }
 </style>

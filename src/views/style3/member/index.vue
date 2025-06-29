@@ -2,30 +2,24 @@
   <div class="main-boxdiv" v-loading="loading">
     <div class="mb-4 mb4_top">
       <span>{{ MemberType[componentsPoPdata.nowmember.type] }}:{{ componentsPoPdata.nowmember.account }}</span>
-      <el-button-group>
-        <el-button type="primary" size="small" v-if="componentsPoPdata.nowmember.type < 10"
-          @click="opencomponentsBox('addCom', 1, '')">
-          添加代理</el-button>
-        <el-button type="primary" size="small" v-if="componentsPoPdata.nowmember.type > 1"
-          @click="opencomponentsBox('addCom', 2, '')">
-          添加直属会员</el-button>
-        <el-button size="small" v-if="componentsPoPdata.nowmember.type < 10"
-          :class="componentsPoPdata.nowdata.type == 1 ? 'is-active' : ''"
-          @click="componentsPoPdata.nowdata.type = 1, componentsPoPdata.nowdata.search = '', getdata()">直属代理 {{ total1
-          }}</el-button>
-        <el-button size="small" v-if="componentsPoPdata.nowmember.type > 1"
-          :class="componentsPoPdata.nowdata.type == 2 ? 'is-active' : ''"
-          @click="componentsPoPdata.nowdata.type = 2, componentsPoPdata.nowdata.search = '', getdata()">直属会员 {{ total2
-          }}</el-button>
-        <el-button size="small" v-if="componentsPoPdata.nowmember.type < 10"
-          :class="componentsPoPdata.nowdata.type == 3 ? 'is-active' : ''"
-          @click="componentsPoPdata.nowdata.type = 3, componentsPoPdata.nowdata.search = '', getdata()">全部代理 {{ total3
-          }}</el-button>
-        <el-button size="small" v-if="componentsPoPdata.nowmember.type < 10"
-          :class="componentsPoPdata.nowdata.type == 4 ? 'is-active' : ''"
-          @click="componentsPoPdata.nowdata.type = 4, componentsPoPdata.nowdata.search = '', getdata()">全部会员 {{ total4
-          }}</el-button>
-      </el-button-group>
+      <span>
+        <span class="topbtnbtn" v-if="componentsPoPdata.nowmember.type < 10"
+          @click="opencomponentsBox('addCom', 1, '')">添加代理</span>
+        <span class="topbtnbtn" v-if="componentsPoPdata.nowmember.type > 1"
+          @click="opencomponentsBox('addCom', 2, '')">添加直属会员</span>
+        <span class="topbtn" v-if="componentsPoPdata.nowmember.type < 10"
+          :class="componentsPoPdata.nowdata.type == 1 ? 'isActive2' : ''"
+          @click="componentsPoPdata.nowdata.type = 1, componentsPoPdata.nowdata.search = '', getdata()">直属代理 {{ total1 }}</span>
+        <span class="topbtn" v-if="componentsPoPdata.nowmember.type > 1"
+          :class="componentsPoPdata.nowdata.type == 2 ? 'isActive2' : ''"
+          @click="componentsPoPdata.nowdata.type = 2, componentsPoPdata.nowdata.search = '', getdata()">直属会员 {{ total2 }}</span>
+        <span class="topbtn" v-if="componentsPoPdata.nowmember.type < 10"
+          :class="componentsPoPdata.nowdata.type == 3 ? 'isActive2' : ''"
+          @click="componentsPoPdata.nowdata.type = 3, componentsPoPdata.nowdata.search = '', getdata()">全部代理 {{ total3 }}</span>
+        <span class="topbtn" v-if="componentsPoPdata.nowmember.type < 10"
+          :class="componentsPoPdata.nowdata.type == 4 ? 'isActive2' : ''"
+          @click="componentsPoPdata.nowdata.type = 4, componentsPoPdata.nowdata.search = '', getdata()">全部会员 {{ total4 }}</span>
+      </span>
       <span>
         状态
       </span>
@@ -40,7 +34,7 @@
         <input v-model="componentsPoPdata.nowdata.search" style="width: 100px" placeholder="请输入账号" />
       </span>
       <span>
-        <el-button type="primary" size="small" @click="getdata()">查询</el-button>
+        <span class="topbtn" @click="getdata()">查询</span>
       </span>
       <span style="margin-left:5px">信用额度:</span>
       <span style="color:red;padding:0px 5px">{{ componentsPoPdata.nowmember.ts }}</span>
@@ -65,24 +59,34 @@
       <div class="titlem bodynav dialog-padding">
         批量操作下级-【{{ tsDownData.account }}】
       </div>
-      <el-form ref="oddsset" :model="tsDownData" label-width="80px" class="custom-form-style">
-        <el-form-item label="操作类型">
-          <el-select v-model="tsDownData.type" style="font-weight: 700; width: 100%;">
-            <!-- <el-option :value="parseInt(1)" label="批量启用所有下级"></el-option> -->
-            <el-option :value="parseInt(1)" label="一键提取所有额度"></el-option>
-            <el-option :value="parseInt(2)" label="一键提取所有占成"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="UpBatch()">确认操作</el-button>
-        </el-form-item>
+      <el-form ref="oddsset" :model="tsDownData" label-width="0px" class="custom-form-style">
+        <table border="1" class="el-form-table">
+          <tbody>
+            <tr>
+              <td class="el-form-table-label">操作类型</td>
+              <td class="el-form-table-tr" style="font-weight:600;">
+                <select v-model="tsDownData.type" style="line-height: 25px;font-weight: 700;">
+                  <!-- <option :value="parseInt(1)">批量启用所有下级</option> -->
+                  <option :value="parseInt(1)">一键提取所有额度</option>
+                  <option :value="parseInt(2)">一键提取所有占成</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="el-form-table-label"></td>
+              <td colspan="3" class="el-form-table-footer">
+                <span class="game_box_topbtn" @click="UpBatch()">确认操作</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </el-form>
     </el-dialog>
-    <el-table border v-if="componentsPoPdata.nowdata.type == 1 || componentsPoPdata.nowdata.type == 3"
-      ref="multipleTableRef" :data="tableData" :height="clientHeight2 + 'px'" style="width: 100%" @cell-click="editCell"
-      header-cell-class-name="trheader">
-      <el-table-column type="index" label="序号1" width="55" />
+    <el-table border :header-cell-class-name="'trheader'"
+      v-if="componentsPoPdata.nowdata.type == 1 || componentsPoPdata.nowdata.type == 3" ref="multipleTableRef"
+      :data="tableData" :cell-class-name="tableCellClassName" :height="clientHeight2 + 'px'" style="width: 100%"
+      @cell-click="editCell">
+      <el-table-column type="index" label="序号" width="55" />
       <el-table-column prop="account" label="账号" width="105">
         <template #default="{ row }">
           <span class="text_nowrap" @click="changgeAccount(row)" :title="row.account">{{ row.account }}</span>
@@ -163,16 +167,14 @@
         <template #default="{ row }">
           <span @click="opencomponentsBox('editCom', 1, row.id)">修改</span> |
           <span @click="opencomponentsBox('dssetCom', 1, row)">退水</span> |
-          <span
-            @click="tsDownData.id = row.id, tsDownData.account = row.account, tsDownData.type = 1, tsDown = true">批量操作</span>
-          |
+          <span @click="tsDownData.id = row.id, tsDownData.account = row.account, tsDownData.type = 1, tsDown = true">批量操作</span> |
           <span @click="opencomponentsBox('logCom', 1, row)">记录</span>
         </template>
       </el-table-column>
     </el-table>
-    <el-table border v-if="componentsPoPdata.nowdata.type == 2 || componentsPoPdata.nowdata.type == 4"
-      ref="multipleTableRef" :data="tableData" :height="clientHeight2 + 'px'" style="width: 100%"
-      @cell-click="editCell">
+    <el-table border :header-cell-class-name="'trheader'"
+      v-if="componentsPoPdata.nowdata.type == 2 || componentsPoPdata.nowdata.type == 4" ref="multipleTableRef"
+      :data="tableData" :height="clientHeight2 + 'px'" style="width: 100%" @cell-click="editCell">
       <el-table-column type="index" label="序号" width="55" />
       <el-table-column prop="account"
         :label="componentsPoPdata.nowdata.type < 3 ? MemberType[componentsPoPdata.nowmember.type] + '直属会员账号' : '会员账号'" />
@@ -632,24 +634,5 @@ export default {
 
 .el-checkbox {
   margin-right: 10px !important;
-}
-</style>
-
-<style>
-/* Global styles for table headers */
-.el-table .trheader {
-  background-color: #eef0f8 !important;
-  color: #111626;
-  font-weight: 700;
-  padding: 3px 0;
-  font-size: 14px;
-}
-
-.el-table th.trheader {
-  background-color: #eef0f8 !important;
-  color: #111626;
-  font-weight: 700;
-  padding: 3px 0;
-  font-size: 14px;
 }
 </style>
