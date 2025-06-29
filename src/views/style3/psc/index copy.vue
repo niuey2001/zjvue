@@ -270,31 +270,29 @@
         </el-table>
       </div>
     </div>
-    <el-dialog v-model="oddssetdialog" title="" style="padding-bottom:0px !important" width="200">
-      <div class=" bodynav dialog-padding" style="background-color:#0088ff; color:white; text-align:center; ">
+    <el-dialog v-model="oddssetdialog" title="" style="padding-bottom:25px !important" width="200px" height="200px" overflow="hidden">
+      <div class="titlem bodynav dialog-padding">
         调整赔率
       </div>
-      <div style="text-align:center; padding:15px 0 5px; display:flex; justify-content:center; align-items:center;">
-        <div class="number-circle">
-          {{ String(oddssetdata.PlayNumber).padStart(2, '0') }}
-        </div>
-      </div>
-      <div class="odds-form-container">
-        <div class="odds-form-item">
-          <div class="odds-label">新赔率:</div>
-          <div class="odds-input">
-            <el-input v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input>
+      <el-form ref="oddsset" :model="oddssetdata" label-width="80px" class="custom-form-style">
+        <div class="form-card">
+          <el-form-item label="号码">
+            <div class="play_text ball_n" style="white-space: nowrap; font-weight:600;"
+              :class="oddssetdata.NumberBs == 66 ? 'ball_red' : oddssetdata.NumberBs == 67 ? 'ball_blue' : oddssetdata.NumberBs == 68 ? 'ball_green' : ''"
+              :style="{ 'color': oddssetdata.NumberItem == 66 || [90, 91, 92, 93, 102, 103, 104, 105, 177].includes(oddssetdata.NumberItem) ? 'red' : oddssetdata.NumberItem == 67 || [94, 95, 96, 97, 106, 107, 108, 109, 178].includes(oddssetdata.NumberItem) ? 'blue' : oddssetdata.NumberItem == 68 || [98, 99, 100, 101, 110, 111, 112, 113, 179].includes(oddssetdata.NumberItem) ? 'green' : '' }">
+              {{ oddssetdata.PlayNumber }}
+            </div>
+          </el-form-item>
+
+          <el-form-item label="赔率">
+            <el-input style="width:120px;" v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input>
+          </el-form-item>
+
+          <div class="form-footer">
+            <el-button type="primary" class="submit-btn" @click="oddssetPost()">确认修改</el-button>
           </div>
         </div>
-        <div class="odds-form-item">
-          <div class="odds-label">最大:</div>
-          <div class="odds-value">{{ oddssetdata.Rate1 }}</div>
-        </div>
-        <div class="odds-buttons">
-          <el-button type="primary" class="submit-btn" @click="oddssetPost()">确定</el-button>
-          <el-button @click="oddssetdialog = false">取消</el-button>
-        </div>
-      </div>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -2654,15 +2652,13 @@ export default {
 .form-footer {
   margin-top: 20px;
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  justify-content: flex-end;
 }
 
 .submit-btn {
   padding: 8px 20px;
   background-color: #0088ff;
   border-color: #0088ff;
-  width: 80px;
 }
 
 .submit-btn:hover {
@@ -2679,83 +2675,5 @@ export default {
   /* padding: 6px 12px; */
   /* border-radius: 4px; */
   display: inline-block;
-}
-
-/* 新增样式 */
-:deep(.el-dialog__header) {
-  display: none;
-}
-
-:deep(.el-dialog__body) {
-  padding: 0;
-}
-
-:deep(.el-form-item__label) {
-  font-weight: bold;
-}
-
-:deep(.el-button) {
-  border-radius: 4px;
-  width: 80px;
-}
-
-/* 赔率调整表单样式
-.odds-form-container {
-  padding: 15px 20px 25px;
-} */
-
-.odds-form-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.odds-label {
-  width: 80px;
-  text-align: right;
-  padding-right: 10px;
-  font-weight: bold;
-}
-
-.odds-input {
-  flex: 1;
-}
-
-.odds-value {
-  flex: 1;
-  font-weight: bold;
-}
-
-.odds-buttons {
-  display: flex;
-  justify-content: center;
-  /* gap: 20px; */
-  /* margin-top: 20px; */
-  margin-bottom: 3px;
-}
-
-:deep(.el-input__inner) {
-  text-align: center;
-  font-size: 16px;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-}
-
-.el-dialog {
-  padding: 0px !important;
-}
-
-.number-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: rgba(0, 136, 255, 0.1);
-  color: #0088ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 36px;
-  font-weight: bold;
-  margin: 10px auto;
 }
 </style>
