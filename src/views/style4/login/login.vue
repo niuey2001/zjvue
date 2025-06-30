@@ -1,30 +1,32 @@
 <template>
-  <div class="bg">
-    <div class="tit">{{ name }}</div>
+  <div class="login-page-wrapper">
+    <div class="bg">
+      <div class="tit">{{ name }}</div>
 
-    <form id="loginForm" class="login-container" @submit.prevent="submitForm">
-      <div class="form-header">
-        <div>管理员登入</div>
-      </div>
-      <div class="form-content">
-        <div class="form-item">
-          <label>账号：</label>
-          <input type="text" v-model="loginForm.Account" autocomplete="off" class="tb">
+      <form id="loginForm" class="login-container" @submit.prevent="submitForm">
+        <div class="form-header">
+          <div>管理员登入</div>
         </div>
-        <div class="form-item">
-          <label>密码：</label>
-          <input type="password" v-model="loginForm.Password" autocomplete="off" class="tb">
+        <div class="form-content">
+          <div class="form-item">
+            <label>账号：</label>
+            <input type="text" v-model="loginForm.Account" autocomplete="off" class="tb">
+          </div>
+          <div class="form-item">
+            <label>密码：</label>
+            <input type="password" v-model="loginForm.Password" autocomplete="off" class="tb">
+          </div>
+          <div class="form-item captcha-item" v-if="captchas.b64s">
+            <label>验证码：</label>
+            <input ref="inputField" type="text" v-model="loginForm.Answer" autocomplete="off" class="tb" maxlength="4">
+            <img :src="captchas.b64s" alt="验证码" class="tb1" @click="getcode()">
+          </div>
+          <div class="form-item button-container">
+            <button type="button" @click="submitForm">登入</button>
+          </div>
         </div>
-        <div class="form-item captcha-item" v-if="captchas.b64s">
-          <label>验证码：</label>
-          <input ref="inputField" type="text" v-model="loginForm.Answer" autocomplete="off" class="tb" maxlength="4">
-          <img :src="captchas.b64s" alt="验证码" class="tb1" @click="getcode()">
-        </div>
-        <div class="form-item button-container">
-          <button type="button" @click="submitForm">登入</button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -143,8 +145,8 @@ export default {
             this.goindex('modifypasswor')
           } else {
             this.alerton = true
-            alert(response.msg);
-            this.goindex('welcome')
+            // alert(response.msg);
+            this.goindex('home')
           }
         } else {
           if (this.$refs.inputField) {
@@ -181,6 +183,16 @@ export default {
 }
 </script>
 <style>
+.login-page-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  z-index: 999;
+}
+
 .bg {
   width: 1200px;
   height: 616px;
@@ -206,7 +218,7 @@ export default {
   width: 300px;
   text-align: center;
   left: 715px;
-  top: 162px;
+  top: 165px;
   border-radius: 5px;
 }
 
@@ -257,7 +269,7 @@ export default {
   color: blue;
   padding: 4px 0;
   font-weight: bold;
-  width: 100px;
+  width: 75px;
   height: 22px;
   cursor: pointer;
 }
@@ -269,7 +281,7 @@ export default {
 }
 
 .captcha-item .tb {
-  width: 80px;
+  width: 60px;
 }
 
 .captcha-item .tb1 {
@@ -278,16 +290,19 @@ export default {
 
 .button-container {
   margin-top: 10px;
+  height: 16px;
 }
 
 button {
   background-color: #f0f0f0;
   color: #333;
   border: 1px solid #ccc;
-  padding: 5px 15px;
+  /* padding: 5px 15px; */
   border-radius: 3px;
   cursor: pointer;
   width: 80px;
+  font-size: 12px;
+  height: 27px;
 }
 
 button:hover {

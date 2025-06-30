@@ -5,141 +5,106 @@
       <el-header>
         <div ref="topheii">
           <div class="el-header-top">
-            <div class="logo">{{ UserInfo.title }}<span style="font-size: 12px;">总监</span></div>
-            <div class="el-header-min-box">
-              <div class="el-header-action-box" style="height: 30px;">
-                <div class="el-header-action-box-list" v-for="item in menuData">
-                  <span v-if="item.action.length == 1" :class="item.action.includes(currentView) ? 'isaction-nav' : ''"
-                    @click="switchWindow(item.action[0])">{{ item.name }}</span>
-                  <el-dropdown trigger="click" :popper-append-to-body="false" v-else>
-                    <span class="el-dropdown-link" :class="item.action.includes(currentView) ? 'isaction-nav' : ''">
-                      {{ item.name }}
-                    </span>
-                    <template #dropdown>
-                      <el-dropdown-menu :popper-append-to-body="false">
-                        <el-dropdown-item v-for="items in item.data" @click="switchWindow(items.sview)">{{ items.name
-                        }}</el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                </div>
-                <div class="el-header-action-box-list">
-                  <span :class="['result'].includes(currentView) ? 'isaction-nav' : ''"
-                    @click="switchWindow('result')">开奖结果</span>
-                </div>
-                <div class="el-header-action-box-list">
-                  <el-dropdown trigger="click" :popper-append-to-body="false">
-                    <span class="el-dropdown-link"
-                      :class="['person', 'passwords', 'rule'].includes(currentView) ? 'isaction-nav' : ''">
-                      个人资料
-                    </span>
-                    <template #dropdown>
-                      <el-dropdown-menu :popper-append-to-body="false">
-                        <el-dropdown-item @click="switchWindow('userinfos')">{{ UserInfo.account }}</el-dropdown-item>
-                        <el-dropdown-item @click="switchWindow('person')">操作日志</el-dropdown-item>
-                        <el-dropdown-item @click="switchWindow('passwords')">修改密码</el-dropdown-item>
-                        <el-dropdown-item @click="switchWindow('rule')">游戏规则</el-dropdown-item>
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-                </div>
-                <div class="el-header-action-box-list">
-                  <span @click="LoginOut()">退出登录</span>
-                </div>
-              </div>
-              <div class="game_info_r_top"
-                v-if="home_data.result && home_data.result.Issue && home_data.result != '' && UserInfo.items">
-                <div class="game_info_r_top_result_box" v-if="isshowresult">
-                  <div class="game_info_r_qishu">
-                    <span>{{ home_data.result.Issue }} 期</span>
-                  </div>
-                  <div class="game_info_r_result">
-                    <span v-for="item in 6">
-                      <div class="result_num"
-                        :class="UserInfo.items[home_data.result['Ball' + item]].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball' + item]].NumberBs == 68 ? 'ball_green' : ''">
-                        <span>{{ UserInfo.items[home_data.result['Ball' + item]].PlayNumber }}</span>
-                      </div>
-                      <div>{{ sxData[home_data.result['NumberSx' + item]] }}</div>
-                    </span>
-                    <span>
-                      <div>+</div>
-                    </span>
-                    <span>
-                      <div class="result_num"
-                        :class="UserInfo.items[home_data.result['Ball7']].NumberBs == 66 ? 'ball_red' : UserInfo.items[home_data.result['Ball7']].NumberBs == 67 ? 'ball_blue' : UserInfo.items[home_data.result['Ball7']].NumberBs == 68 ? 'ball_green' : ''">
-                        <span>{{ UserInfo.items[home_data.result['Ball7']].PlayNumber }}</span>
-                      </div>
-                      <div>{{ sxData[home_data.result['NumberSx7']] }}</div>
-                    </span>
-                  </div>
-                </div>
-                <div class="top_userinfo" style="display: none;">
-                  <!-- <div style="width: 185px;overflow: hidden;">
-                      <span>当前时间:</span>
-                      <span>{{nowedate}}</span>
-                    </div>
-                    <el-divider direction="vertical"></el-divider> -->
-                  <div>
-                    <span>{{ UserInfo.account }} ({{ MemberType[UserInfo.type] }}<span v-if="UserInfo.son">
-                        子账号</span>)</span>
-                  </div>
-                  <el-divider direction="vertical"></el-divider>
-                  <div>
-                    <span style="cursor: pointer" @click="switchWindow('person')"
-                      :class="currentView === 'passwords' ? 'isaction-nav' : ''">操作日志</span>
-                  </div>
-                  <el-divider direction="vertical"></el-divider>
-                  <div>
-                    <span style="cursor: pointer" @click="switchWindow('passwords')"
-                      :class="currentView === 'passwords' ? 'isaction-nav' : ''">密码修改</span>
-                  </div>
-                  <el-divider direction="vertical"></el-divider>
-                  <div>
-                    <span style="cursor: pointer" @click="LoginOut()">登出</span>
-                  </div>
-                </div>
-              </div>
+            <div class="header-left">
+              <div class="time-info">时间: {{ nowedate }} 总监: {{ UserInfo.account }}</div>
+              <div class="logo">{{ UserInfo.title }}<span style="font-size: 12px;">总监</span></div>
             </div>
-          </div>
-          <div class="game_herad">
-            <div class="game_herad_mueu">
-              <div class="game_herad_mueu_navB" v-for="(items, index) in home_data.GameList">
-                <div v-if="index < 6" class="game_herad_mueu_nav"
-                  :class="index === home_data.game_index ? 'isActive' : ''" @click="changeLotteryId(items, index)">
-                  <span>
-                    {{ items.name }}
-                  </span>
-                </div>
-                <div v-if="index < 6" class="game_herad_mueu_nav_linel"></div>
-                <div v-if="index < 6" class="game_herad_mueu_nav_liner"></div>
-              </div>
-              <div class="game_herad_mueu_navB" v-if="home_data.GameList.length >= 6">
-                <div class="game_herad_mueu_nav iconnav">
-                  <el-dropdown>
-                    <span class="el-dropdown-link">
-                      更多游戏顶部
-                    </span>
-                    <template #dropdown>
-                      <el-dropdown-menu>
-                        <span v-for="(items, index) in home_data.GameList">
-                          <el-dropdown-item v-if="index >= 6" @click="changeLotteryId(items, index)">{{ items.name
-                          }}</el-dropdown-item>
+            <div class="header-right">
+              <div class="game_herad">
+                <div class="game_herad_mueu">
+                  <div class="game_herad_mueu_navB" v-for="(items, index) in home_data.GameList">
+                    <div v-if="index < 6" class="game_herad_mueu_nav"
+                      :class="index === home_data.game_index ? 'isActive' : ''" @click="changeLotteryId(items, index)">
+                      <span>
+                        {{ items.name }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="game_herad_mueu_navB" v-if="home_data.GameList.length >= 6">
+                    <div class="game_herad_mueu_nav iconnav">
+                      <el-dropdown>
+                        <span class="el-dropdown-link">
+                          更多游戏
                         </span>
-
-                      </el-dropdown-menu>
-                    </template>
-                  </el-dropdown>
-
+                        <template #dropdown>
+                          <el-dropdown-menu>
+                            <span v-for="(items, index) in home_data.GameList">
+                              <el-dropdown-item v-if="index >= 6" @click="changeLotteryId(items, index)">{{ items.name
+                              }}</el-dropdown-item>
+                            </span>
+                          </el-dropdown-menu>
+                        </template>
+                      </el-dropdown>
+                    </div>
+                  </div>
                 </div>
-                <div class="game_herad_mueu_nav_linel"></div>
-                <div class="game_herad_mueu_nav_liner"></div>
               </div>
-              <div class="game_herad_mueu_navB" @click="gamesortkey++, gamesort = true">
-                <div class="game_herad_mueu_nav iconnav">
-                  <el-icon>
-                    <Setting />
-                  </el-icon>
-                  设置
+              <div class="header-spacer"></div>
+              <div class="nav-tabs">
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'jiankong' }"
+                  @click="switchWindow('jiankong')">观察台</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'kongpan' }"
+                  @click="switchWindow('kongpan')">外围</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'jszd' }" @click="switchWindow('jszd')">
+                  彩盘监控</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'report' }"
+                  @click="switchWindow('report')">风险监控</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'lottery' }"
+                  @click="switchWindow('lottery')">开奖记录</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'member' }"
+                  @click="switchWindow('member')">订单查询</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'rule' }" @click="switchWindow('rule')">日报
+                </div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'userinfopage' }"
+                  @click="switchWindow('userinfopage')">
+                  月报</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'bhuser' }"
+                  @click="switchWindow('bhuser')">分类报表</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'person' }"
+                  @click="switchWindow('person')">用户管理</div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'passwords' }"
+                  @click="switchWindow('passwords')">系统设置
+                </div>
+                <div class="nav-tab" :class="{ 'active-tab': currentView === 'userinfos' }"
+                  @click="switchWindow('userinfos')">个人中心
+                </div>
+                <div class="nav-tab" @click="LoginOut()">游戏说明</div>
+                <div class="nav-tab logout-tab" @click="LoginOut()">退出</div>
+              </div>
+              <div class="marquee-container">
+                <div class="marquee-content">
+                  【2025-06-26】已于06-26
+                  19:23:37注销会员:[qqq777,qqq888,]新澳门⑥合第2025178期部分订单号:1498582,1498581,1498580,1498579,1498578,1498577,1498576,1498575,1498574,1498573,1498572,1498571,1498570,1498569,1498568,1498567,1498566,1498565,1498564,1498563,1498562,1498561,1498560！【2025-06-25】已于06-25
+                  14:12:07还原会员【kk11】新澳门⑥合第2025176期全部订单！ 【2025-06-25】已于06-25
+                  14:11:34注销会员【kk11】新澳门⑥合第2025176期全部订单！【2025-06-20】已于06-20
+                  00:05:40注销会员:[cc55]新澳门⑥合第2025172期部分订单号:1498307！ 【2025-06-19】已于06-19
+                  23:37:40注销会员:[qq10]新澳门⑥合第2025170期部分订单号:1498249！
+                  【2025-06-19】已于06-19 20:15:00注销会员【dx0003】新澳门⑥合第2025170期全部订单！【2025-06-17】已于06-17
+                  17:39:49注销会员:[ww33,]新澳门⑥合第2025169期部分订单号:1498179,1498178,1498177！ 【2025-06-17】已于06-17
+                  17:06:43注销会员:[aa111,]新澳门⑥合第2025169期部分订单号:1498172！ 【2025-06-17】已于06-17
+                  17:05:48注销会员【dx0001】新澳门⑥合第2025169期全部订单！【2025-06-17】已于06-17
+                  17:04:30注销会员:[dx0001]新澳门⑥合第2025169期部分订单号:1498147！
+                  【2025-06-17】已于06-17 17:03:07注销会员【dx0001】新澳门⑥合第2025169期全部订单！ 【2025-06-17】已于06-17
+                  16:57:04注销会员【dx0001】新澳门⑥合第2025169期全部订单！【2025-06-17】已于06-17
+                  15:47:43注销会员:[ww33]新澳门⑥合第2025169期部分订单号:1498130！
+                  【2025-06-16】已于06-16 17:01:10注销代理【cc1】新澳门⑥合第2025168期部分订单！
+                </div>
+                <div class="marquee-content">
+                  【2025-06-26】已于06-26
+                  19:23:37注销会员:[qqq777,qqq888,]新澳门⑥合第2025178期部分订单号:1498582,1498581,1498580,1498579,1498578,1498577,1498576,1498575,1498574,1498573,1498572,1498571,1498570,1498569,1498568,1498567,1498566,1498565,1498564,1498563,1498562,1498561,1498560！【2025-06-25】已于06-25
+                  14:12:07还原会员【kk11】新澳门⑥合第2025176期全部订单！ 【2025-06-25】已于06-25
+                  14:11:34注销会员【kk11】新澳门⑥合第2025176期全部订单！【2025-06-20】已于06-20
+                  00:05:40注销会员:[cc55]新澳门⑥合第2025172期部分订单号:1498307！ 【2025-06-19】已于06-19
+                  23:37:40注销会员:[qq10]新澳门⑥合第2025170期部分订单号:1498249！
+                  【2025-06-19】已于06-19 20:15:00注销会员【dx0003】新澳门⑥合第2025170期全部订单！【2025-06-17】已于06-17
+                  17:39:49注销会员:[ww33,]新澳门⑥合第2025169期部分订单号:1498179,1498178,1498177！ 【2025-06-17】已于06-17
+                  17:06:43注销会员:[aa111,]新澳门⑥合第2025169期部分订单号:1498172！ 【2025-06-17】已于06-17
+                  17:05:48注销会员【dx0001】新澳门⑥合第2025169期全部订单！【2025-06-17】已于06-17
+                  17:04:30注销会员:[dx0001]新澳门⑥合第2025169期部分订单号:1498147！
+                  【2025-06-17】已于06-17 17:03:07注销会员【dx0001】新澳门⑥合第2025169期全部订单！ 【2025-06-17】已于06-17
+                  16:57:04注销会员【dx0001】新澳门⑥合第2025169期全部订单！【2025-06-17】已于06-17
+                  15:47:43注销会员:[ww33]新澳门⑥合第2025169期部分订单号:1498130！
+                  【2025-06-16】已于06-16 17:01:10注销代理【cc1】新澳门⑥合第2025168期部分订单！
                 </div>
               </div>
             </div>
@@ -554,78 +519,129 @@ export default {
 }
 
 .el-header {
-  height: 100px;
+  height: 120px;
   padding: 0px;
 }
 
 .el-header-top {
   position: relative;
-  background: linear-gradient(#1358a5, #1358a5, #0c4b8e, #0a3e78);
+  background: #8a6e29;
   color: #fff;
   display: flex;
   justify-content: space-between;
-  align-items: center
-}
-
-.el-header-top {
-  height: 60px;
+  height: 120px;
   padding: 0px !important;
 }
 
+.header-left {
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+  padding-left: 10px;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 85%;
+  padding-right: 10px;
+  height: 100%;
+}
+
+.header-spacer {
+  flex-grow: 1;
+}
+
+.status-info {
+  font-size: 12px;
+  color: #fff;
+  text-align: right;
+  padding: 5px 0;
+}
+
 .logo {
-  letter-spacing: 8px;
-  min-width: 240px;
-  width: 240px;
+  letter-spacing: 5px;
+  min-width: 200px;
   overflow: hidden;
-  font-size: 40px;
+  font-size: 30px;
   font-family: "lato", sans-serif;
   font-weight: 900;
   text-shadow: 2px -1px #0c3352d4, 3px -4px #0c3352eb, 4px -3px #0c3352eb;
+  margin-bottom: 5px;
 }
 
-.el-header-min-box {
-  min-height: 58px;
-  width: 100%;
-  line-height: 30px;
-  display: flex;
-  align-items: flex-start;
+.time-info {
+  font-size: 12px;
+  padding: 5px 0;
+  text-align: left;
 }
 
-.el-header-action-box {
+.nav-tabs {
   display: flex;
   flex-wrap: wrap;
-  font-size: 13px;
-  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 5px;
 }
 
-.el-header-action-box-list {
-  font-weight: bold;
-  font-size: 15px;
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  background: linear-gradient(#18457b, #002c5a);
-  border-radius: 0 0 6px 6px;
-  min-width: 80px;
-  text-align: center;
+.nav-tab {
+  padding: 5px 10px;
+  background-color: #5f4c1c;
   color: #fff;
   margin: 0 2px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 3px 3px 0 0;
+  border: 1px solid #8a6e29;
+  border-bottom: none;
 }
 
-.el-header-action-box-list:hover {
-  color: #FFEB3B;
+.nav-tab:hover {
+  background-color: #d1b464;
+  color: #000;
 }
 
-.isaction-nav {
-  color: #FFEB3B;
+.active-tab {
+  background-color: #d1b464;
+  color: #000;
+  font-weight: bold;
 }
 
-.el-header-action-box-list-line {
-  width: 60px;
-  width: 0px;
-  height: 10px;
-  margin: 0px;
-  background-color: #9dd0e9;
+.logout-tab {
+  background-color: #8a3e29;
+}
+
+.game_herad {
+  margin-top: 5px;
+}
+
+.game_herad_mueu {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.game_herad_mueu_navB {
+  margin-right: 5px;
+}
+
+.game_herad_mueu_nav {
+  padding: 5px 10px;
+  background-color: #5f4c1c;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 5px;
+}
+
+.game_herad_mueu_nav:hover,
+.isActive {
+  background-color: #d1b464;
+  color: #000;
+}
+
+.iconnav {
+  display: flex;
+  align-items: center;
 }
 
 .layout-container-demo .el-aside {
@@ -695,5 +711,97 @@ export default {
 
 .notice-content:hover {
   color: #FFC107;
+}
+
+.game-result-container {
+  background: #5f4c1c;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid #d1b464;
+}
+
+.game-result-issue {
+  font-weight: bold;
+  margin-right: 15px;
+  color: #fff;
+}
+
+.game-result-numbers {
+  display: flex;
+  align-items: center;
+}
+
+.result-ball {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 3px;
+  font-weight: bold;
+}
+
+.ball-red {
+  background-color: #e94c4c;
+}
+
+.ball-blue {
+  background-color: #3c78d8;
+}
+
+.ball-green {
+  background-color: #6aa84f;
+}
+
+.result-animal {
+  font-size: 12px;
+  text-align: center;
+  color: #fff;
+}
+
+.plus-sign {
+  margin: 0 5px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.marquee-container {
+  overflow: hidden;
+  width: 100%;
+  height: 20px;
+  position: relative;
+  margin-bottom: 5px;
+}
+
+.marquee-content {
+  position: absolute;
+  top: 0;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 12px;
+  will-change: transform;
+  animation: marquee-scroll 240s linear infinite;
+}
+
+.marquee-content:nth-child(2) {
+  animation-delay: -120s;
+}
+
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+  color: #ffeb3b;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
 }
 </style>

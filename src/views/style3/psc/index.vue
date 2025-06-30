@@ -268,32 +268,54 @@
             </template>
           </el-table-column>
         </el-table>
+
+        <div class="game_herad_tab" style="margin:0 auto">
+          <table class="game-category-table">
+            <thead>
+              <tr>
+                <th colspan="2">各项明细</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(items, index) in Play_Grpup_data" :class="default_Group === index ? 'active-row' : ''"
+                @click="QuickChooseDatas = [], Play_Group_Check(index, 0, items)">
+                <td>{{ items.group_name }}</td>
+                <td v-if="index < 4">{{ parseInt(handleTotalLong(items.total_num, 2)) }}</td>
+                <td v-if="index >= 4">{{ parseInt(handleTotalLong(items.total_num, -1)) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
-    <el-dialog v-model="oddssetdialog" title="" style="padding-bottom:0px !important" width="200">
-      <div class=" bodynav dialog-padding" style="background-color:#0088ff; color:white; text-align:center; ">
+    <el-dialog v-model="oddssetdialog" title="" style="padding-bottom:0px !important" width="240">
+      <div class="bodynav" style="background-color:#0088ff; color:white; text-align:center;">
         调整赔率
       </div>
-      <div style="text-align:center; padding:15px 0 5px; display:flex; justify-content:center; align-items:center;">
+      <div style="text-align:center; display:flex; justify-content:center; align-items:center;">
         <div class="number-circle">
           {{ String(oddssetdata.PlayNumber).padStart(2, '0') }}
         </div>
       </div>
-      <div class="odds-form-container">
-        <div class="odds-form-item">
-          <div class="odds-label">新赔率:</div>
-          <div class="odds-input">
-            <el-input v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input>
-          </div>
-        </div>
-        <div class="odds-form-item">
-          <div class="odds-label">最大:</div>
-          <div class="odds-value">{{ oddssetdata.Rate1 }}</div>
-        </div>
-        <div class="odds-buttons">
-          <el-button type="primary" class="submit-btn" @click="oddssetPost()">确定</el-button>
-          <el-button @click="oddssetdialog = false">取消</el-button>
-        </div>
+      <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 10px; border: 1px solid #cdd2de;">
+        <tbody>
+          <tr style="height: 35px; line-height: 35px;">
+            <td style="background-color: #e9f4ff;  width: 100px; text-align: center; ">新赔率:
+            </td>
+            <td><el-input v-model="oddssetdata.Rate1" placeholder="请输入赔率"></el-input></td>
+          </tr>
+          <tr style="height: 35px; line-height: 35px;">
+            <td style="background-color: #e9f4ff;   width: 100px; text-align: center;">最大:
+            </td>
+            <td style="  background: #f6f6f6;"> {{ oddssetdata.Rate1 }} </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="odds-buttons">
+        <el-button type="primary" class="submit-btn" @click="oddssetPost()">确定</el-button>
+        <el-button @click="oddssetdialog = false">取消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -2165,7 +2187,7 @@ export default {
         } else {
           this.$message.error(response.msg);
         }
-
+        console.log(this.Play_Grpup_data)
       }).catch(error => {
         this.Loadingodds = false
         this.$message.error('网络请求错误1');
@@ -2707,7 +2729,7 @@ export default {
 .odds-form-item {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  border: 1px solid #dcdfe6;
 }
 
 .odds-label {
@@ -2729,9 +2751,8 @@ export default {
 .odds-buttons {
   display: flex;
   justify-content: center;
-  /* gap: 20px; */
-  /* margin-top: 20px; */
-  margin-bottom: 3px;
+  gap: 10px;
+  margin: 10px 0 15px;
 }
 
 :deep(.el-input__inner) {
@@ -2741,21 +2762,74 @@ export default {
   border-radius: 4px;
 }
 
-.el-dialog {
+:deep(.el-dialog) {
   padding: 0px !important;
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .number-circle {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background-color: rgba(0, 136, 255, 0.1);
   color: #0088ff;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 36px;
+  font-size: 25px;
+  margin: 15px auto;
+}
+
+.bodynav {
+  padding: 10px 0;
+  font-size: 16px;
   font-weight: bold;
-  margin: 10px auto;
+}
+
+.submit-btn {
+  background-color: #0088ff;
+  border-color: #0088ff;
+}
+
+.submit-btn:hover {
+  background-color: #0077ee;
+  border-color: #0077ee;
+}
+
+.game-category-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #c9d8ea;
+  font-size: 14px;
+  background-color: #eef0f8;
+}
+
+.game-category-table th,
+.game-category-table td {
+  padding: 6px 8px;
+  text-align: center;
+  border: 1px solid #c9d8ea;
+}
+
+.game-category-table th {
+  background-color: #eef0f8;
+  color: #333;
+  font-weight: bold;
+}
+
+.game-category-table tbody tr:hover {
+  background-color: #aed3ff;
+  cursor: pointer;
+}
+
+.active-row {
+  background-color: #aed3ff !important;
+}
+
+.game_herad_tab {
+  /* max-width: 250px; */
+  margin: 0 auto;
+  min-width: 200px;
 }
 </style>
